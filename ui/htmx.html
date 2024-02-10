@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>HTMX</title>
+	<link rel='stylesheet' type='text/css' href="./css/style.css">
+</head>
+
+<body>
+	<div class="container">
+		<button onclick="myFunction()">Change Title</button>
+		<button onclick="changeColor()">Change color</button>
+
+
+		<a href="about.html">About Page</a> /
+		<a href="htmx.html">HTMX</a> /
+		<a href="alpine.html">Alpine</a>
+
+		<h1 id="header">HTMX PAGE</h1>
+
+		<details open>
+			<summary>Test</summary>
+			<p>Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international
+				pavilions, award-winning fireworks and seasonal special events.</p>
+		</details>
+
+
+		<button onclick="callRust()">call Rust</button>
+		<button onclick="callRust2()">call Rust2</button>
+		<button onclick="callRust3()">call Rust3</button>
+		<button onclick="make_event()">Make Event</button>
+
+		<div id="testDiv">Just Some descriptive text. <a href="https://daily.dev/blog/alpine-js-the-ultimate-guide">Alpine ultimate guide.</a></div>
+
+		<!-- have a button POST a click via AJAX -->
+		<button hx-post="/clicked" hx-swap="outerHTML">
+			HTMX CLICK ME
+		</button>
+	</div>
+
+	<script src="./js/global.js" type="text/javascript"></script>
+	<script defer src="./js/htmx.min.js"></script>
+	<script defer src="./js/alpine.min.js"></script>
+</body>
+
+</html>

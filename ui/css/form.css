@@ -1,0 +1,42 @@
+.selectionContainer {
+	/* border: 1px solid red; */
+	display: flex;
+	flex-direction: row;
+	margin:20px 0px;
+}
+
+.selectionContainer h3 {
+	/* border: 1px solid red; */
+	text-transform: uppercase;
+	padding: 0px 0px 3px 0px;
+	margin: 0px;
+	font-size:14px;
+}
+
+.selectionContainer .box {
+	/* border: 1px solid green; */
+	margin:0px 20px 0px 0px;
+	width:140px;
+}
+
+.selectionContainer form {
+	/* border: 1px solid blue; */
+	margin: 0px;
+}
+
+.selectionContainer select, .selectionContainer input  {
+	/* border: 1px solid red; */
+	text-transform: uppercase;
+	padding: 2px;
+	width:120px;
+}
+
+.selectionContainer .box select :last-child {
+	border: 1px solid rgb(128, 0, 70);
+	width:1100%;
+}
+
+
+#baudRateCustom {
+	display:none;
+}

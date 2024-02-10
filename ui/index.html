@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Index</title>
+	<link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+	<link rel='stylesheet' type='text/css' href="./css/style.css" />
+	<link rel='stylesheet' type='text/css' href="./css/sidebar.css" />
+	<link rel='stylesheet' type='text/css' href="./css/form.css" />
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="sidebar">
+			<div class="logo-details">
+				<i class="bx bxl-c-plus-plus icon"></i>
+				<div class="logo_name">Yoofie's Lab</div>
+				<i class="bx bx-menu" id="btn"></i>
+			</div>
+			<ul class="nav-list">
+				<li>
+					<i class="bx bx-search"></i>
+					<input type="text" placeholder="Search..." />
+					<span class="tooltip">Search</span>
+				</li>
+				<li>
+					<a href="index.html">
+						<i class="bx bx-grid-alt"></i>
+						<span class="links_name">Dashboard</span>
+					</a>
+					<span class="tooltip">Dashboard</span>
+				</li>
+				<li>
+					<a href="about.html">
+						<i class="bx bx-user"></i>
+						<span class="links_name">User</span>
+					</a>
+					<span class="tooltip">User</span>
+				</li>
+				<li>
+					<a href="#" hx-post="command:my_custom_command_with_result_value" hx-trigger="click"
+						hx-target=".contentFrame" hx-swap="innerHTML">
+						<i class="bx bx-chat"></i>
+						<span class="links_name">Messages</span>
+					</a>
+					<span class="tooltip">Messages</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-pie-chart-alt-2"></i>
+						<span class="links_name">Analytics</span>
+					</a>
+					<span class="tooltip">Analytics</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-folder"></i>
+						<span class="links_name">File Manager</span>
+					</a>
+					<span class="tooltip">Files</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-cart-alt"></i>
+						<span class="links_name">Order</span>
+					</a>
+					<span class="tooltip">Order</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-heart"></i>
+						<span class="links_name">Saved</span>
+					</a>
+					<span class="tooltip">Saved</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-cog"></i>
+						<span class="links_name">Setting</span>
+					</a>
+					<span class="tooltip">Setting</span>
+				</li>
+				<li class="profile">
+					<div class="profile-details">
+						<img src="profile.jpg" alt="profileImg" />
+						<div class="name_job">
+							<div class="name">Prem Shahi</div>
+							<div class="job">Web designer</div>
+						</div>
+					</div>
+					<i class="bx bx-log-out" id="log_out"></i>
+				</li>
+			</ul>
+		</div>
+		<div class="contentFrame">
+
+			<div class="serialCfg">
+				<div class="selectionContainer">
+					<div class="box">
+						<h3>Channel</h3>
+						<form id="channelForm" name="channelForm" action="" method="POST">
+							<select name="com_channel" id="com_channel">
+								<option value="COM4">COM 4</option>
+								<option value="COM5">COM 5</option>
+								<option value="COM6">COM 6</option>
+								<option value="audi">COM 7</option>
+							</select>
+
+
+						</form>
+					</div>
+
+					<div class="box">
+						<h3>Baud Rate</h3>
+						<form id="baudForm" name="baudForm" action="" method="POST">
+							<select name="baud_rate" id="baud_rate" onchange="baudrateChange()">
+								<option value="9600">9600</option>
+								<option value="112600">112600</option>
+								<option value="921600">921600</option>
+								<option value="CUSTOM">CUSTOM</option>
+							</select>
+
+							<div id="baudRateCustom">
+								<br>
+								<input id="baud_rate_custom" type="number" list="baudRateSuggestions" step="1000"
+									placeholder="115200" value="115200" />
+
+								<datalist id="baudRateSuggestions">
+									<option value="9600">
+									<option value="115200">
+									<option value="250000">
+								</datalist>
+							</div>
+						</form>
+					</div>
+
+
+					<div class="box">
+						<h3>Parity</h3>
+						<form id="parityForm" name="parityForm" action="" method="POST">
+							<!-- <select name="parity" id="parity">
+								<option value="0">0</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+							</select> -->
+
+							<input id="parity" type="number" list="quantities" min="0" max="2" step="1" placeholder="0"
+								value="0">
+							<datalist id="quantities">
+								<option value="0">
+								<option value="1">
+							</datalist>
+						</form>
+					</div>
+
+					<div class="box">
+						<h3>Stop Bits</h3>
+						<form id="stopBitsForm" name="stopBitsForm" action="" method="POST">
+							<select name="stopBits" id="stopBits">
+								<option value="0">0</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+							</select>
+
+
+						</form>
+					</div>
+
+					<div class="box">
+						<h3>Decoder</h3>
+						<form name="decoderForm" id="decoderForm" action="" method="POST">
+							<select name="decoder" id="decoder" onchange="decoderChange()">
+								<option value="ASCII">ASCII</option>
+								<option value="COBS">COBS</option>
+								<option value="CUSTOM">CUSTOM</option>
+							</select>
+							<div id="customDecoderField">
+								<br>
+								<input id="customDecoder" list="customDecoderSuggestions" placeholder="ASCII"
+									value="ASCII" />
+								<datalist id="customDecoderSuggestions">
+									<option>Afghanistan</option>
+									<option>Åland Islands</option>
+									<option>Albania</option>
+									<option>Algeria</option>
+									<option>American Samoa</option>
+									<option>Andorra</option>
+									<option>Angola</option>
+									<option>Anguilla</option>
+									<option>Antarctica</option>
+									<option>Antigua and Barbuda</option>
+									<option>Argentina</option>
+									<option>Armenia</option>
+									<option>Aruba</option>
+									<option>Australia</option>
+									<option>Austria</option>
+									<option>Azerbaijan</option>
+									<option>Bahamas</option>
+									<option>Bahrain</option>
+									<option>Bangladesh</option>
+									<option>Barbados</option>
+									<option>Belarus</option>
+									<option>Belgium</option>
+								</datalist>
+							</div>
+
+						</form>
+					</div>
+
+					<div class="lastbox">
+						<h3>&nbsp;</h3>
+						<form name="myform" action="" method="POST">
+							<input type="button" name="button" value="Advanced" onClick="get_user_cfg_data()" />
+							<input type="button" name="button" value="Refresh" onClick="testResults(this.form)" />
+							<input type="button" name="button" value="Submit" onClick="get_user_cfg_data()" />
+						</form>
+					</div>
+
+				</div>
+			</div>
+
+			<h1 id="header">INDEX PAGE</h1>
+			
+			<details open>
+				<summary>LOG</summary>
+				<div id="counter">0</div>
+				<button id="btn" onclick="addRow()">Add row</button>
+				<button id="btn" onclick="callJson()">Call JSON</button>
+
+				<div x-data="{ text: 'wowza' }">
+
+					<span x-text="text"></span>
+
+				</div>
+
+				<table id="logTable" width="100%">
+					<thead>
+						<th style="width:10%">Index</th>
+						<th style="width:10%">Time</th>
+						<th>Message</th>
+					</thead>
+					<tbody>
+						<tr>
+							<td> Alex </td>
+							<td> 20 </td>
+							<td> New York </td>
+						</tr>
+						<tr>
+							<td> Tim </td>
+							<td> 18 </td>
+							<td> Boston </td>
+						</tr>
+
+					</tbody>
+				</table>
+			</details>
+
+
+
+		</div>
+
+
+	</div>
+	<script src="./js/hyperlist.js" type="text/javascript"></script>
+	<script src="./js/global.js" type="text/javascript"></script>
+	<script src="./js/sidebar.js" type="text/javascript"></script>
+	<script src="./js/form.js" type="text/javascript"></script>
+	<script defer src="./js/htmx.min.js"></script>
+	<!-- <script src="./js/tauri-plugin-htmx.js" type="text/javascript"></script> -->
+	<script defer src="./js/alpine.min.js"></script> <!-- https://alpinejs.dev/start-here -->
+</body>
+
+</html>

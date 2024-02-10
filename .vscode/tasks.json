@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build",
+			"type": "shell",
+			"command": "just build",
+			"problemMatcher": [],
+			
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+		},
+	]
+}

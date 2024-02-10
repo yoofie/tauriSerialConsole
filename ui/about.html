@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>About</title>
+	<link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+	<link rel='stylesheet' type='text/css' href="./css/style.css" />
+	<link rel='stylesheet' type='text/css' href="./css/sidebar.css" />
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="sidebar">
+			<div class="logo-details">
+				<i class="bx bxl-c-plus-plus icon"></i>
+				<div class="logo_name">Yoofie's Lab</div>
+				<i class="bx bx-menu" id="btn"></i>
+			</div>
+			<ul class="nav-list">
+				<li>
+					<i class="bx bx-search"></i>
+					<input type="text" placeholder="Search..." />
+					<span class="tooltip">Search</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-grid-alt"></i>
+						<span class="links_name">Dashboard</span>
+					</a>
+					<span class="tooltip">Dashboard</span>
+				</li>
+				<li>
+					<a href="about.html">
+						<i class="bx bx-user"></i>
+						<span class="links_name">User</span>
+					</a>
+					<span class="tooltip">User</span>
+				</li>
+				<li>
+					<a href="htmx.html">
+						<i class="bx bx-chat"></i>
+						<span class="links_name">Messages</span>
+					</a>
+					<span class="tooltip">Messages</span>
+				</li>
+				<li>
+					<a href="alpine.html">
+						<i class="bx bx-pie-chart-alt-2"></i>
+						<span class="links_name">Analytics</span>
+					</a>
+					<span class="tooltip">Analytics</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-folder"></i>
+						<span class="links_name">File Manager</span>
+					</a>
+					<span class="tooltip">Files</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-cart-alt"></i>
+						<span class="links_name">Order</span>
+					</a>
+					<span class="tooltip">Order</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-heart"></i>
+						<span class="links_name">Saved</span>
+					</a>
+					<span class="tooltip">Saved</span>
+				</li>
+				<li>
+					<a href="#">
+						<i class="bx bx-cog"></i>
+						<span class="links_name">Setting</span>
+					</a>
+					<span class="tooltip">Setting</span>
+				</li>
+				<li class="profile">
+					<div class="profile-details">
+						<img src="profile.jpg" alt="profileImg" />
+						<div class="name_job">
+							<div class="name">Prem Shahi</div>
+							<div class="job">Web designer</div>
+						</div>
+					</div>
+					<i class="bx bx-log-out" id="log_out"></i>
+				</li>
+			</ul>
+		</div>
+		<div class="contentFrame">
+
+			<button onclick="myFunction()">Change Title</button>
+			<button onclick="changeColor()">Change color</button>
+
+			<a href="about.html">About Page</a> /
+			<a href="htmx.html">HTMX</a> /
+			<a href="alpine.html">Alpine</a>
+
+
+			<h1 id="header">About PAGE</h1>
+
+			<details open>
+				<summary>INDEX PAGE</summary>
+				<p>Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international
+					pavilions,
+					award-winning fireworks and seasonal special events.</p>
+			</details>
+			<div id="logx">
+				LOG ITEMS
+			</div>
+			<ul id="logx2">
+				LOG ITEMS
+			</ul>
+			<details open>
+				<summary>LOG</summary>
+				<div id="counter">0</div>
+				<button id="btn" onclick="addRow()">Add row</button>
+				<button id="btn" onclick="callJson()">Call JSON</button>
+
+				<div x-data="{ text: 'wowza' }">
+
+					<span x-text="text"></span>
+
+				</div>
+
+				<table id="logTable" width="100%">
+					<thead>
+						<th style="width:10%">Index</th>
+						<th style="width:10%">Time</th>
+						<th>Message</th>
+					</thead>
+					<tbody>
+						<tr>
+							<td> Alex </td>
+							<td> 20 </td>
+							<td> New York </td>
+						</tr>
+						<tr>
+							<td> Tim </td>
+							<td> 18 </td>
+							<td> Boston </td>
+						</tr>
+
+					</tbody>
+				</table>
+			</details>
+
+
+
+			<div id="testDiv">Just some text.</div>
+
+
+			<details open>
+				<summary>Virtual list</summary>
+				<p>Virtual list</p>
+			</details>
+
+		</div>
+
+
+	</div>
+	<script src="./js/hyperlist.js" type="text/javascript"></script>
+	<script src="./js/global.js" type="text/javascript"></script>
+	<script src="./js/sidebar.js" type="text/javascript"></script>
+	<script defer src="./js/htmx.min.js"></script>
+	<script defer src="./js/alpine.min.js"></script> <!-- https://alpinejs.dev/start-here -->
+</body>
+
+</html>

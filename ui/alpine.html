@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>ABOUT</title>
+	<link rel='stylesheet' type='text/css' href="./css/style.css">
+</head>
+
+<body>
+	<div class="container">
+		<button onclick="myFunction()">Change Title</button>
+		<button onclick="changeColor()">Change color</button>
+
+		<a href="about.html">About Page</a> /
+		<a href="htmx.html">HTMX</a> /
+		<a href="alpine.html">Alpine</a>
+
+
+		<h1 id="header">ABOUT ME PAGE</h1>
+
+		<details>
+			<summary>ABOUT PAGE</summary>
+			<p>Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international
+				pavilions,
+				award-winning fireworks and seasonal special events.</p>
+		</details>
+
+
+
+		<div id="testDiv">TEST BACKGROUND</div>
+		<div x-data="{ count: 0 }">
+			<button x-on:click="count++">Increment</button>
+			<button onclick="reset()">Reset</button>
+
+			<span x-text="count"></span>
+		</div>
+
+		<div id="counter">0</div>
+
+		<hr>
+
+	</div>
+	<script src="./js/global.js" type="text/javascript"></script>
+	<script defer src="./js/htmx.min.js"></script>
+	<script defer src="./js/alpine.min.js"></script>
+</body>
+
+</html>
