@@ -46,7 +46,7 @@ pub enum message {
 pub struct serialSettings {
 	pub parity: u8,
 	pub stop_bits: u8,
-	pub port: String,
+	pub port_name: String,
 	pub baud: u32,
 	pub decoder: frameType,
 }

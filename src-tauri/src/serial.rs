@@ -16,40 +16,61 @@
 	Enums & Structures
 ******************************************************** */
 
+use std::time::Duration;
+
+use loole::{Receiver, Sender};
+
+use crate::serialWrapper::{frameType, message, serialSettings};
+
 /* ********************************************************
 	Public APIs
 ******************************************************** */
 #[derive(Debug)]
 pub struct serial {
-	pub txrx: (Sender<serialCtrl>, Receiver<serialCtrl>),
-	baud: u32,
-	port_name: String,
+	pub txrx: (Sender<bool>, Receiver<bool>),
 	iBuffer: Vec<u8>,
 	cobsBuffer: Vec<u8>,
-	pub send_target: Option<Sender<message>>,
-	settings: Option<serialSettings>,
+	pub send_target: Sender<message>,
+	settings: serialSettings,
 	fType: frameType,
 }
 /* ********************************************************
 	Private APIs
 ******************************************************** */
 impl serial {
+	pub fn new(cfg: serialSettings, send: Sender<message>) -> serial {
+		let decoder = cfg.decoder.clone();
+		serial {
+			txrx: loole::unbounded::<bool>(),
+			iBuffer: Vec::with_capacity(2048),
+			cobsBuffer: Vec::with_capacity(2048),
+			send_target: send,
+			settings: cfg,
+			fType: decoder,
+		}
+	}
 	pub fn run_serial(&mut self) {
-		let sPort = serialport::new(self.port_name.as_str(), self.baud)
+		let sPort = serialport::new(self.settings.port_name.as_str(), self.settings.baud)
 			.timeout(Duration::from_millis(20))
 			.open();
 
 		match sPort {
 			Ok(mut port) => {
 				let mut serial_buf: Vec<u8> = vec![0; 1000];
-				println!("Receiving data on {} at {} baud:", &port_name, &baud_rate);
+				println!(
+					"Receiving data on {} at {} baud:",
+					&self.settings.port_name, &self.settings.baud
+				);
 
 				port.clear(serialport::ClearBuffer::All).unwrap_or_else(|x| {
 					println!("Error clearing buffer {}", x);
 				});
 				match sPort {
 					Ok(mut port) => {
-						println!("Receiving data on {} at {} baud:", &self.port_name, &self.baud);
+						println!(
+							"Receiving data on {} at {} baud:",
+							&self.settings.port_name, &self.settings.baud
+						);
 
 						port.clear(serialport::ClearBuffer::All).unwrap_or_else(|x| {
 							println!("Error clearing buffer {}", x);
@@ -86,13 +107,11 @@ impl serial {
 									}
 								}
 							}
-							if self.exit {
-								break;
-							}
-							match self.channel.1.try_recv() {
+
+							match self.txrx.1.try_recv() {
 								Ok(value) => {
 									if value {
-										self.exit();
+										break;
 									}
 								}
 								Err(_) => {}
@@ -100,13 +119,13 @@ impl serial {
 						}
 					}
 					Err(e) => {
-						eprintln!("Failed to open \"{}\". Error: {}", self.port_name, e);
+						eprintln!("Failed to open \"{}\". Error: {}", self.settings.port_name.clone(), e);
 						::std::process::exit(1);
 					}
 				}
 			}
 			Err(e) => {
-				eprintln!("Failed to open \"{}\". Error: {}", port_name, e);
+				eprintln!("Failed to open \"{}\". Error: {}", self.settings.port_name.clone(), e);
 				::std::process::exit(1);
 			}
 		}

@@ -35,6 +35,7 @@ use crate::{
 };
 pub mod appCfg;
 pub mod asyncEngine;
+pub mod serial;
 pub mod serialWrapper;
 /* ********************************************************
 	Enums & Structures
