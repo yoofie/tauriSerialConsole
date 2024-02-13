@@ -14,10 +14,12 @@ mod asyncEngine;
 Imports
 ******************************************************** */
 use appCfg::{appSettings, gState, startCmdLine, tauriState};
+use flume::{Receiver, Sender};
 use include_dir::{include_dir, Dir};
-use loole::{Receiver, Sender};
+
 use once_cell::sync::OnceCell;
-use serde_json::json;
+use serde_json::{json, Value};
+use serialWrapper::{sCtrl, serialCtrl};
 use std::{
 	path::PathBuf,
 	sync::{Arc, RwLock},
@@ -33,12 +35,14 @@ use crate::{
 };
 pub mod appCfg;
 pub mod asyncEngine;
+pub mod serialWrapper;
 /* ********************************************************
 	Enums & Structures
 ******************************************************** */
 static GLOBALCFG: OnceCell<appSettings> = OnceCell::new();
 static mut TAURI_STATE: OnceCell<tauriState> = OnceCell::new();
 static G_STATE: OnceCell<gState> = OnceCell::new();
+static SERIAL_CTRL: OnceCell<sCtrl> = OnceCell::new();
 
 //static PROJECT_DIR: Dir = include_dir!("../../../ui/views/");
 /* ********************************************************
@@ -120,7 +124,12 @@ fn main() {
 					let mut xx = tauriEngineWrapper.0.write().unwrap();
 					xx.set_handle(app.handle().clone());
 				}
-				let (_tx, rx): (Sender<internalMail>, Receiver<internalMail>) = loole::bounded(128);
+
+				SERIAL_CTRL
+					.set(sCtrl::new(app.handle().clone()))
+					.expect("#1 | FAILED TO CREATE SERIAL_CTRL CTX");
+
+				let (_tx, rx): (Sender<internalMail>, Receiver<internalMail>) = flume::bounded(128);
 				app.manage(tauriEngineWrapper);
 
 				tauri::async_runtime::spawn(async move {
@@ -257,6 +266,28 @@ fn testFile() -> String {
 	let my_str = "fdgsdfgasdfgfdg";
 	include_str!("../rustfmt.toml");
 	my_str.to_owned()
+}
+
+#[tauri::command]
+fn send_cmd(cmd: String) -> Result<(), String> {
+	let Some(theContext) = SERIAL_CTRL.get() else {
+		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
+	};
+
+	match serde_json::from_str::<serialCtrl>(cmd.as_str()) {
+		Ok(pkg) => {
+			let tx = theContext.tx.clone();
+			if let Err(e) = tx.send(pkg) {
+				println!("FAILED SEND | {}", e);
+			}
+			Ok(())
+		}
+		Err(e) => {
+			println!("asdasd");
+			Err(format!("Failed to parse JSON {}", e))
+		}
+	}
 }
 
 /* ********************************************************

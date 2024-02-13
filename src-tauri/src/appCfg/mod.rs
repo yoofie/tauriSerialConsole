@@ -17,6 +17,8 @@ use clap::ArgMatches;
 pub use cmd::startCmdLine;
 use tauri::AppHandle;
 
+use crate::serialWrapper::sCtrl;
+
 pub mod cmd;
 /* ********************************************************
 	Enums & Structures
@@ -32,6 +34,10 @@ pub struct appSettings {
 #[derive(Debug)]
 pub struct tauriState {
 	pub tauriEngine: Option<sWrapper>,
+}
+#[derive(Debug)]
+pub struct serialControl {
+	pub s_ctrl: sCtrl,
 }
 
 #[derive(Clone, Debug)]
