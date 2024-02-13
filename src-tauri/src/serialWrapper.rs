@@ -20,7 +20,8 @@ use std::{
 use loole::{unbounded, Receiver, Sender};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use tauri::AppHandle;
+use serde_json::Value;
+use tauri::{AppHandle, Manager};
 
 use crate::serial::serial;
 
@@ -40,6 +41,7 @@ pub enum serialCtrl {
 	PLAY,
 	PAUSE,
 	EXIT,
+	EXIT_THREAD,
 	NEW(serialSettings),
 }
 #[derive(Debug)]
@@ -66,6 +68,7 @@ pub struct sCtrl {
 	pub send_target: Option<Sender<bool>>,
 	pub thread_handle: Option<JoinHandle<()>>,
 	pub tauri_handle: Option<AppHandle>,
+	pub serial_settings: Option<serialSettings>,
 }
 /* ********************************************************
 	Private APIs
@@ -79,27 +82,52 @@ impl sCtrl {
 			send_target: None,
 			thread_handle: None,
 			tauri_handle: Some(handle),
+			serial_settings: None,
 		}
 	}
 
-	pub fn ctrl_loop(&mut self) {
+	pub fn ctrl_loop(mut self) {
 		loop {
 			match self.rx.recv() {
 				Ok(cmd) => {
 					println!("RX THREAD");
 					match cmd {
 						serialCtrl::PLAY => {
-							println!("sdfsdf");
+							println!(":asdfs");
+							if self.serial_settings.is_some() {
+								self.tx
+									.send(serialCtrl::NEW(
+										self.serial_settings
+											.clone()
+											.expect("#10 | FAILED TO GET SERIAL SETTINGS")
+											.clone(),
+									))
+									.unwrap();
+							} else {
+								println!("");
+							}
 						}
 						serialCtrl::PAUSE => {
 							println!("sdfsdf");
+							if let Some(serial_tx) = self.send_target.clone() {
+								serial_tx.send(true).expect("Failed to send serial kill command");
+								self.send_target = None;
+								self.thread_handle = None;
+							}
 						}
 						serialCtrl::EXIT => {
 							println!("sdfsdf");
+							if let Some(serial_tx) = self.send_target.clone() {
+								serial_tx.send(true).expect("Failed to send serial kill command");
+								self.send_target = None;
+								self.thread_handle = None;
+								self.serial_settings = None;
+							}
 						}
 						serialCtrl::NEW(cfg) => {
 							println!("sdfsdf");
 							if self.validate_settings(&cfg) {
+								self.serial_settings = Some(cfg.clone());
 								let (tx, _rx) = loole::unbounded::<message>();
 								let id = rand::thread_rng().gen_range(0..255);
 								let mut ss = serial::new(
@@ -113,7 +141,20 @@ impl sCtrl {
 									ss.run_serial();
 								});
 								self.thread_handle = Some(thread);
+							} else {
+								if let Some(handle) = self.tauri_handle.clone() {
+									if handle
+										.emit_all("threadCtrl", "This event is show in frontend!!!")
+										.is_err()
+									{
+										println!("#20 | Failed to emit threadCtrl status event");
+									}
+								}
 							}
+						}
+						serialCtrl::EXIT_THREAD => {
+							println!("Received kill thread command!");
+							break;
 						}
 					}
 				}
@@ -123,7 +164,23 @@ impl sCtrl {
 			}
 		}
 	}
-	pub fn validate_settings(&self, settings: &serialSettings) -> bool {
+	pub fn validate_settings(&self, _settings: &serialSettings) -> bool {
 		false
+	}
+
+	pub fn get_current_settings(&self) -> bool {
+		if self.serial_settings.is_some() {
+			let _settings = serde_json::to_string(
+				&self
+					.serial_settings
+					.clone()
+					.expect("#11 | FAILED TO GET SERIAL SETTINGS")
+					.clone(),
+			)
+			.expect("FAILED TO SERILIZE");
+			true
+		} else {
+			false
+		}
 	}
 }
