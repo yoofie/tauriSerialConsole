@@ -93,7 +93,7 @@ impl sCtrl {
 					println!("RX THREAD");
 					match cmd {
 						serialCtrl::PLAY => {
-							println!(":asdfs");
+							println!("RX'd PLAY CMD");
 							if self.serial_settings.is_some() {
 								self.tx
 									.send(serialCtrl::NEW(
@@ -104,19 +104,21 @@ impl sCtrl {
 									))
 									.unwrap();
 							} else {
-								println!("");
+								println!("FAILED PLAY CMD - SERIAL SERIAL SETTINGS MISSING");
 							}
 						}
+
 						serialCtrl::PAUSE => {
-							println!("sdfsdf");
+							println!("RX'd PAUSE COMMAND");
 							if let Some(serial_tx) = self.send_target.clone() {
 								serial_tx.send(true).expect("Failed to send serial kill command");
 								self.send_target = None;
 								self.thread_handle = None;
 							}
 						}
+
 						serialCtrl::EXIT => {
-							println!("sdfsdf");
+							println!("RX'd EXIT CMD");
 							if let Some(serial_tx) = self.send_target.clone() {
 								serial_tx.send(true).expect("Failed to send serial kill command");
 								self.send_target = None;
@@ -124,8 +126,9 @@ impl sCtrl {
 								self.serial_settings = None;
 							}
 						}
+
 						serialCtrl::NEW(cfg) => {
-							println!("sdfsdf");
+							println!("RX'd NEW CMD");
 							if self.validate_settings(&cfg) {
 								self.serial_settings = Some(cfg.clone());
 								let (tx, _rx) = loole::unbounded::<message>();
@@ -152,6 +155,7 @@ impl sCtrl {
 								}
 							}
 						}
+
 						serialCtrl::EXIT_THREAD => {
 							println!("Received kill thread command!");
 							break;
