@@ -12,11 +12,17 @@
 	Imports
 ******************************************************** */
 
-use std::{thread::JoinHandle, time::Duration};
+use std::{
+	thread::{self, JoinHandle},
+	time::Duration,
+};
 
 use loole::{unbounded, Receiver, Sender};
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use tauri::AppHandle;
+
+use crate::serial::serial;
 
 /* ********************************************************
 	Enums & Structures
@@ -57,7 +63,7 @@ pub struct serialSettings {
 pub struct sCtrl {
 	pub tx: Sender<serialCtrl>,
 	pub rx: Receiver<serialCtrl>,
-	pub send_target: Option<Sender<message>>,
+	pub send_target: Option<Sender<bool>>,
 	pub thread_handle: Option<JoinHandle<()>>,
 	pub tauri_handle: Option<AppHandle>,
 }
@@ -93,6 +99,21 @@ impl sCtrl {
 						}
 						serialCtrl::NEW(cfg) => {
 							println!("sdfsdf");
+							if self.validate_settings(&cfg) {
+								let (tx, _rx) = loole::unbounded::<message>();
+								let id = rand::thread_rng().gen_range(0..255);
+								let mut ss = serial::new(
+									cfg,
+									tx,
+									id,
+									self.tauri_handle.clone().expect("FAILED TO EXTRACT APP HANDLE").clone(),
+								);
+								self.send_target = Some(ss.get_tx());
+								let thread = thread::spawn(move || {
+									ss.run_serial();
+								});
+								self.thread_handle = Some(thread);
+							}
 						}
 					}
 				}
@@ -102,8 +123,7 @@ impl sCtrl {
 			}
 		}
 	}
-}
-
-pub fn validate_settings(settings: serialSettings) -> bool {
-	false
+	pub fn validate_settings(&self, settings: &serialSettings) -> bool {
+		false
+	}
 }

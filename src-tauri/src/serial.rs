@@ -19,6 +19,7 @@
 use std::time::Duration;
 
 use loole::{Receiver, Sender};
+use tauri::AppHandle;
 
 use crate::serialWrapper::{frameType, message, serialSettings};
 
@@ -33,12 +34,14 @@ pub struct serial {
 	pub send_target: Sender<message>,
 	settings: serialSettings,
 	fType: frameType,
+	id: u8,
+	tauriHandle: AppHandle,
 }
 /* ********************************************************
 	Private APIs
 ******************************************************** */
 impl serial {
-	pub fn new(cfg: serialSettings, send: Sender<message>) -> serial {
+	pub fn new(cfg: serialSettings, send: Sender<message>, id: u8, handle: AppHandle) -> serial {
 		let decoder = cfg.decoder.clone();
 		serial {
 			txrx: loole::unbounded::<bool>(),
@@ -47,16 +50,22 @@ impl serial {
 			send_target: send,
 			settings: cfg,
 			fType: decoder,
+			id: 0,
+			tauriHandle: handle,
 		}
 	}
+
+	pub fn get_tx(&self) -> Sender<bool> {
+		self.txrx.0.clone()
+	}
+
 	pub fn run_serial(&mut self) {
 		let sPort = serialport::new(self.settings.port_name.as_str(), self.settings.baud)
 			.timeout(Duration::from_millis(20))
 			.open();
 
 		match sPort {
-			Ok(mut port) => {
-				let mut serial_buf: Vec<u8> = vec![0; 1000];
+			Ok(ref port) => {
 				println!(
 					"Receiving data on {} at {} baud:",
 					&self.settings.port_name, &self.settings.baud
@@ -69,7 +78,8 @@ impl serial {
 					Ok(mut port) => {
 						println!(
 							"Receiving data on {} at {} baud:",
-							&self.settings.port_name, &self.settings.baud
+							&self.settings.port_name.clone(),
+							&self.settings.baud.clone()
 						);
 
 						port.clear(serialport::ClearBuffer::All).unwrap_or_else(|x| {
@@ -129,6 +139,8 @@ impl serial {
 				::std::process::exit(1);
 			}
 		}
+
+		println!("Exiting Serial Thread #{}", self.id);
 	}
 
 	pub fn read_bytes(&mut self) {
