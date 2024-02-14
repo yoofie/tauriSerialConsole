@@ -52,6 +52,7 @@ window.addEventListener("DOMContentLoaded", () => {
 //document.addEventListener('contextmenu', event => event.preventDefault());
 
 var logData = new Array();
+var serialData = new Array();
 var container = document.createElement("div");
 var config = {
   height: window.innerHeight,
@@ -173,6 +174,7 @@ listen("c1", ev => {
 
 listen("serialEvent", ev => {
 	console.log(`SERIAL EVENT | ${ev.payload}`);
+	serialData.push(ev.payload);
   });
 
 function addRow() {
@@ -196,6 +198,36 @@ function addRow() {
   console.log(`CONSOLE LENGTH = ${logData.length}`);
 }
 
+var prev_length = 0;
+
+function addSerialData() {
+	var current_size = serialData.length;
+
+	if (current_size != prev_length) {
+		prev_length = current_size;
+
+		// Get the table element in which you want to add row
+		let table = document.getElementById("logTable");
+
+		// Create a row using the inserRow() method and
+		// specify the index where you want to add the row
+		let row = table.insertRow(-1); // We are adding at the end
+	  
+		// Create table cells
+		let c1 = row.insertCell(0);
+		let c2 = row.insertCell(1);
+		let c3 = row.insertCell(2);
+	  
+		// Add data to c1 and c2
+		c1.innerText = row.rowIndex;
+		c2.innerText = userx.name;
+		c3.innerText = serialData[current_size - 1];
+	  
+		console.log(`CONSOLE LENGTH = ${logData.length}`);
+	}
+  
+}
+
 function appendLog(target, logItem) {
   console.log("YESS");
   var logx2 = document.getElementById("logx2");
@@ -215,28 +247,21 @@ function appendLog(target, logItem) {
 }
 
 var counter = document.querySelector("#counter");
-var number = 0;
-var firstRun = true;
-var countUp = function() {
-  if (firstRun) {
-    firstRun = false;
-    callJson();
-  }
 
-  // Increase number by 1
-  number++;
+var number = 0;
+
+
+var countUp = function() {
 
   // Update the UI
-  counter.textContent = number;
+  counter.textContent = serialData.length;
 
   // if the number is less than 500, run it again
-  if (number < 500) {
-    addRow();
-    config.height = window.innerHeight;
-    config.total = logData.length;
-    list.refresh(container, config);
-    window.requestAnimationFrame(countUp);
-  }
+	addSerialData();
+
+	config.height = window.innerHeight;
+	config.total = logData.length;
+	window.requestAnimationFrame(countUp);
 };
 
 // Start the animation
