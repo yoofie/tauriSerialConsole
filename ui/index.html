@@ -214,8 +214,9 @@
 						<h3>&nbsp;</h3>
 						<form name="myform" action="" method="POST">
 							<input type="button" name="button" value="Advanced" onClick="get_user_cfg_data()" />
-							<input type="button" name="button" value="Refresh" onClick="testResults(this.form)" />
+							<input type="button" name="button" value="Refresh" onClick="call_cfg()" />
 							<input type="button" name="button" value="Submit" onClick="get_user_cfg_data()" />
+							<input type="button" name="button" value="Submit" onClick="greet()" />
 						</form>
 					</div>
 
@@ -229,6 +230,8 @@
 				<div id="counter">0</div>
 				<button id="btn" onclick="addRow()">Add row</button>
 				<button id="btn" onclick="callJson()">Call JSON</button>
+				<button id="btn" onclick="call_cfg()">Call Cfg</button>
+				<button id="btn" onclick="callRust()">Call Rust</button>
 
 				<div x-data="{ text: 'wowza' }">
 
@@ -266,6 +269,7 @@
 	</div>
 	<script src="./js/hyperlist.js" type="text/javascript"></script>
 	<script src="./js/global.js" type="text/javascript"></script>
+	<script src="./js/serialCtrl.js" type="text/javascript"></script>
 	<script src="./js/sidebar.js" type="text/javascript"></script>
 	<script src="./js/form.js" type="text/javascript"></script>
 	<script defer src="./js/htmx.min.js"></script>

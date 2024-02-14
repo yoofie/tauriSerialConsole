@@ -19,7 +19,7 @@ use include_dir::{include_dir, Dir};
 
 use once_cell::sync::OnceCell;
 use serde_json::{json, Value};
-use serialWrapper::{sCtrl, serialCtrl};
+use serialWrapper::{sCtrl, serialCtrl, serialSettings};
 use std::{
 	path::PathBuf,
 	sync::{Arc, RwLock},
@@ -103,6 +103,17 @@ fn main() {
 			.on_menu_event(|event| match event.menu_item_id() {
 				"quit" => {
 					println!("PRESSED QUIT!!!");
+
+					match SERIAL_CTRL.get() {
+						Some(ctx) => {
+							println!("Asda");
+							ctx.tx.send(serialCtrl::EXIT_THREAD).expect("Failed to send");
+						}
+						None => {
+							println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+						}
+					}
+
 					std::process::exit(0);
 				}
 				"close" => {
@@ -118,7 +129,9 @@ fn main() {
 				resultJson,
 				fn_with_error_handling,
 				get_status,
-				set_status
+				set_status,
+				send_cfg,
+				send_cmd
 			])
 			.setup(|app| {
 				{
@@ -289,6 +302,25 @@ fn send_cmd(cmd: String) -> Result<(), String> {
 			Err(format!("Failed to parse JSON {}", e))
 		}
 	}
+}
+
+#[tauri::command]
+fn send_cfg(blah: String) -> Result<String, String> {
+	/* let Some(theContext) = SERIAL_CTRL.get() else {
+		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
+	}; */
+
+	println!("RX BACKEND | {}", blah);
+
+	/* let settings = serde_json::from_str::<serialSettings>(cmd).expect("FAILED TO PARSE JSON");
+
+	let tx = theContext.tx.clone();
+	if let Err(e) = tx.send(serialCtrl::NEW(settings)) {
+		println!("FAILED SEND | {}", e);
+	} */
+
+	Ok("Just a message".to_string())
 }
 
 /* ********************************************************
