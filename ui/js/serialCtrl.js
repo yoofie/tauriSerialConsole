@@ -33,3 +33,12 @@ function call_cfg() {
 	invoke("send_cfg", { blah: json_cfg_string }).then(message => console.log(message));
   }
   
+  function ctrl_play() {
+
+	invoke("ctrl_play").then(message => console.log(message));
+  }
+  
+  function ctrl_pause() {
+
+	invoke("ctrl_pause").then(message => console.log(message));
+  }

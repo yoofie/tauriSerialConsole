@@ -131,7 +131,9 @@ fn main() {
 				get_status,
 				set_status,
 				send_cfg,
-				send_cmd
+				send_cmd,
+				ctrl_play,
+				ctrl_pause
 			])
 			.setup(|app| {
 				{
@@ -286,13 +288,13 @@ fn testFile() -> String {
 }
 
 #[tauri::command]
-fn send_cmd(cmd: String) -> Result<(), String> {
+fn send_cmd(req: String) -> Result<(), String> {
 	let Some(theContext) = SERIAL_CTRL.get() else {
 		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
 		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
 	};
 
-	match serde_json::from_str::<serialCtrl>(cmd.as_str()) {
+	match serde_json::from_str::<serialCtrl>(req.as_str()) {
 		Ok(pkg) => {
 			let tx = theContext.tx.clone();
 			if let Err(e) = tx.send(pkg) {
@@ -324,6 +326,34 @@ fn send_cfg(blah: String) -> Result<String, String> {
 	}
 
 	Ok("Just a message".to_string())
+}
+
+#[tauri::command]
+fn ctrl_play() -> Result<String, String> {
+	let Some(theContext) = SERIAL_CTRL.get() else {
+		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
+	};
+
+	let tx = theContext.tx.clone();
+	match tx.send(serialCtrl::PLAY) {
+		Ok(_) => Ok("PLAY COMMAND sent successfully!".to_string()),
+		Err(e) => Err(format!("PLAY COMMAND FAILED TO SEND {}", e)),
+	}
+}
+
+#[tauri::command]
+fn ctrl_pause() -> Result<String, String> {
+	let Some(theContext) = SERIAL_CTRL.get() else {
+		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
+	};
+
+	let tx = theContext.tx.clone();
+	match tx.send(serialCtrl::PAUSE) {
+		Ok(_) => Ok("PAUSE COMMAND sent successfully!".to_string()),
+		Err(e) => Err(format!("PAUSE COMMAND FAILED TO SEND {}", e)),
+	}
 }
 
 /* ********************************************************
