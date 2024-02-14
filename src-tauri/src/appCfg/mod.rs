@@ -17,7 +17,7 @@ use clap::ArgMatches;
 pub use cmd::startCmdLine;
 use tauri::AppHandle;
 
-use crate::serialWrapper::sCtrl;
+use crate::serialWrapper::sManager;
 
 pub mod cmd;
 /* ********************************************************
@@ -37,7 +37,7 @@ pub struct tauriState {
 }
 #[derive(Debug)]
 pub struct serialControl {
-	pub s_ctrl: sCtrl,
+	pub s_ctrl: sManager,
 }
 
 #[derive(Clone, Debug)]

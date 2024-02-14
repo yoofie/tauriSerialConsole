@@ -19,11 +19,11 @@ use include_dir::{include_dir, Dir};
 
 use once_cell::sync::OnceCell;
 use serde_json::{json, Value};
-use serialWrapper::{sCtrl, serialCtrl, serialSettings};
+use serialWrapper::{sCtrl, sManager, serialCtrl, serialSettings};
 use std::{
 	path::PathBuf,
 	sync::{Arc, RwLock},
-	thread::{sleep, spawn},
+	thread::{self, sleep, spawn},
 	time::Duration,
 };
 
@@ -138,10 +138,13 @@ fn main() {
 					let mut xx = tauriEngineWrapper.0.write().unwrap();
 					xx.set_handle(app.handle().clone());
 				}
+				let (mut sMan, mut sCtrl) = sManager::new(app.handle().clone());
 
-				SERIAL_CTRL
-					.set(sCtrl::new(app.handle().clone()))
-					.expect("#1 | FAILED TO CREATE SERIAL_CTRL CTX");
+				let thread = thread::spawn(move || {
+					sMan.ctrl_loop();
+				});
+				sCtrl.thread_handle = Some(thread);
+				SERIAL_CTRL.set(sCtrl).expect("#1 | FAILED TO CREATE SERIAL_CTRL CTX");
 
 				let (_tx, rx): (Sender<internalMail>, Receiver<internalMail>) = flume::bounded(128);
 				app.manage(tauriEngineWrapper);

@@ -62,7 +62,7 @@ pub struct serialSettings {
 	Public APIs
 ******************************************************** */
 #[derive(Debug)]
-pub struct sCtrl {
+pub struct sManager {
 	pub tx: Sender<serialCtrl>,
 	pub rx: Receiver<serialCtrl>,
 	pub send_target: Option<Sender<bool>>,
@@ -70,20 +70,33 @@ pub struct sCtrl {
 	pub tauri_handle: Option<AppHandle>,
 	pub serial_settings: Option<serialSettings>,
 }
+#[derive(Debug)]
+pub struct sCtrl {
+	pub tx: Sender<serialCtrl>,
+	pub thread_handle: Option<JoinHandle<()>>,
+	pub tauri_handle: Option<AppHandle>,
+}
 /* ********************************************************
 	Private APIs
 ******************************************************** */
-impl sCtrl {
-	pub fn new(handle: AppHandle) -> sCtrl {
+impl sManager {
+	pub fn new(handle: AppHandle) -> (sManager, sCtrl) {
 		let (tx, rx) = loole::unbounded::<serialCtrl>();
-		sCtrl {
-			tx: tx,
-			rx: rx,
-			send_target: None,
-			thread_handle: None,
-			tauri_handle: Some(handle),
-			serial_settings: None,
-		}
+		(
+			sManager {
+				tx: tx.clone(),
+				rx: rx,
+				send_target: None,
+				thread_handle: None,
+				tauri_handle: Some(handle.clone()),
+				serial_settings: None,
+			},
+			sCtrl {
+				tx,
+				thread_handle: None,
+				tauri_handle: Some(handle),
+			},
+		)
 	}
 
 	pub fn ctrl_loop(&mut self) {
