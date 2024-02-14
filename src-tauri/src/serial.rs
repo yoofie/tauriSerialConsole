@@ -168,7 +168,7 @@ impl serial {
 						item.iter().for_each(|ff| print!("{:#x} ", ff));
 						print!("\t");
 						s = std::str::from_utf8(&item[..]).expect("invalid utf-8 sequence");
-						println!("UTF8 | {}\n", s);
+						print!("UTF8 | {}\n", s);
 						if let Err(e) = self.tauriHandle.emit_all("serialEvent", s) {
 							println!("SERIAL | FAILED TO EMIT EVENT DATA | {}", e);
 						}

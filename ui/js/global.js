@@ -204,29 +204,52 @@ function addSerialData() {
 	var current_size = serialData.length;
 
 	if (current_size != prev_length) {
+		let diff = current_size - prev_length;
+		let index = prev_length;
 		prev_length = current_size;
+		for (let i = 0; i < diff; i++) { 
 
-		// Get the table element in which you want to add row
-		let table = document.getElementById("logTable");
+			// Get the table element in which you want to add row
+			let table = document.getElementById("logTable");
 
-		// Create a row using the inserRow() method and
-		// specify the index where you want to add the row
-		let row = table.insertRow(-1); // We are adding at the end
-	  
-		// Create table cells
-		let c1 = row.insertCell(0);
-		let c2 = row.insertCell(1);
-		let c3 = row.insertCell(2);
-	  
-		// Add data to c1 and c2
-		c1.innerText = row.rowIndex;
-		c2.innerText = userx.name;
-		c3.innerText = serialData[current_size - 1];
-	  
-		console.log(`CONSOLE LENGTH = ${logData.length}`);
+			// Create a row using the inserRow() method and
+			// specify the index where you want to add the row
+			let row = table.insertRow(-1); // We are adding at the end
+			
+			// Create table cells
+			let c1 = row.insertCell(0);
+			let c2 = row.insertCell(1);
+			let c3 = row.insertCell(2);
+			
+			// Add data to c1 and c2
+			c1.innerText = row.rowIndex;
+			c2.innerText = userx.name;
+			c3.innerText = serialData[index + i];
+			
+			console.log(`CONSOLE LENGTH = ${logData.length}`);
+		}
 	}
   
 }
+
+function clearBuffer(){
+	var Table = document.getElementById("logTable");
+Table.innerHTML = `<thead>
+<th style="width:10%">Index</th>
+<th style="width:10%">Time</th>
+<th>Message</th>
+</thead>`;
+
+	/* var elmtTable = document.getElementById('logTable');
+	var tableRows = elmtTable.getElementsByTagName('tr');
+	var rowCount = tableRows.length;
+
+for (var x=rowCount-1; x>0; x--) {
+   elmtTable.removeChild(tableRows[x]);
+} */
+serialData.length = 0;
+}
+
 
 function appendLog(target, logItem) {
   console.log("YESS");
