@@ -19,7 +19,7 @@
 use std::time::Duration;
 
 use loole::{Receiver, Sender};
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 
 use crate::serialWrapper::{frameType, message, serialCtrl, serialSettings};
 
@@ -57,7 +57,7 @@ impl serial {
 			send_target: send,
 			settings: cfg,
 			fType: decoder,
-			id: 0,
+			id: id,
 			tauriHandle: handle,
 			sManagerTx: sMan,
 		}
@@ -166,8 +166,12 @@ impl serial {
 					if !item.is_empty() {
 						print!("{} | ", indexx);
 						item.iter().for_each(|ff| print!("{:#x} ", ff));
-						print!("\n");
+						print!("\t");
 						s = std::str::from_utf8(&item[..]).expect("invalid utf-8 sequence");
+						println!("UTF8 | {}\n", s);
+						if let Err(e) = self.tauriHandle.emit_all("serialEvent", s) {
+							println!("SERIAL | FAILED TO EMIT EVENT DATA | {}", e);
+						}
 					}
 				}
 			}

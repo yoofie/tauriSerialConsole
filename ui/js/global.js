@@ -171,6 +171,10 @@ listen("c1", ev => {
   emit("fr_response", "message");
 });
 
+listen("serialEvent", ev => {
+	console.log(`SERIAL EVENT | ${ev.payload}`);
+  });
+
 function addRow() {
   // Get the table element in which you want to add row
   let table = document.getElementById("logTable");
