@@ -10,7 +10,7 @@
 
 use std::{thread::sleep, time::Duration};
 
-use loole::{Receiver, Sender};
+use flume::Receiver;
 use tauri::Manager;
 
 /* ********************************************************
@@ -46,46 +46,7 @@ pub async fn asyncEngineLoop(rx: Receiver<internalMail>) {
 		.clone()
 		.unwrap();
 	sleep(Duration::from_secs(2));
-	/* loop {
-		tauri::async_runtime::select! {
-			Some(rslt) = rx.recv() => {
-				match rslt {
-					internalMail::CMD(_x) =>{
-						println!("ASYNC RT | X | Server sent command w/o being connected!");
-					}
 
-					internalMail::EVENT(_data, _origString) => {
-						println!("ASYNC RT | X | E#22: Server sent eventData w/o being connect!");
-					}
-
-					internalMail::TOGGLE_DEBUG_MSG(newValue) => {
-						println!("ASYNC RT | DBG MESSAGE | {newValue}");
-					}
-
-					internalMail::REGISTER_CALLBACKS(cmd, fnPtr) => {
-						match gctx.fnCallbacks.insert(cmd.clone(), fnPtr) {
-							Some(_x) => {
-								println!("Function callback for {cmd} successfully updated!");
-							}
-							None => {
-								println!("Function callback for {cmd} successfully registered!");
-							}
-						};
-						gctx.test();
-					}
-
-					internalMail::DEREGISTER_CALLBACKS(cmd) => {
-						gctx.fnCallbacks.remove(&cmd);
-					}
-
-					internalMail::KILL_CMD => {
-						println!("ASYNC RT | Kill CMD rx'd");
-						exit = true;
-					}
-				}
-			}
-		}
-	} */
 	let mut counter = 0;
 	loop {
 		std::thread::sleep(std::time::Duration::from_secs(2));

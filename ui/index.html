@@ -117,8 +117,8 @@
 						<h3>Baud Rate</h3>
 						<form id="baudForm" name="baudForm" action="" method="POST">
 							<select name="baud_rate" id="baud_rate" onchange="baudrateChange()">
+								<option value="115200">115200</option>
 								<option value="9600">9600</option>
-								<option value="112600">112600</option>
 								<option value="921600">921600</option>
 								<option value="CUSTOM">CUSTOM</option>
 							</select>
@@ -214,8 +214,9 @@
 						<h3>&nbsp;</h3>
 						<form name="myform" action="" method="POST">
 							<input type="button" name="button" value="Advanced" onClick="get_user_cfg_data()" />
-							<input type="button" name="button" value="Refresh" onClick="testResults(this.form)" />
+							<input type="button" name="button" value="Refresh" onClick="call_cfg()" />
 							<input type="button" name="button" value="Submit" onClick="get_user_cfg_data()" />
+							<input type="button" name="button" value="Submit" onClick="greet()" />
 						</form>
 					</div>
 
@@ -223,12 +224,17 @@
 			</div>
 
 			<h1 id="header">INDEX PAGE</h1>
-			
+
 			<details open>
 				<summary>LOG</summary>
 				<div id="counter">0</div>
 				<button id="btn" onclick="addRow()">Add row</button>
 				<button id="btn" onclick="callJson()">Call JSON</button>
+				<button id="btn" onclick="call_cfg()">Call Cfg</button>
+				<button id="btn" onclick="callRust()">Call Rust</button>
+				<br>
+				<button id="btn" onclick="ctrl_play()">ctrl_play</button>
+				<button id="btn" onclick="ctrl_pause()">ctrl_pause</button>
 
 				<div x-data="{ text: 'wowza' }">
 
@@ -266,6 +272,7 @@
 	</div>
 	<script src="./js/hyperlist.js" type="text/javascript"></script>
 	<script src="./js/global.js" type="text/javascript"></script>
+	<script src="./js/serialCtrl.js" type="text/javascript"></script>
 	<script src="./js/sidebar.js" type="text/javascript"></script>
 	<script src="./js/form.js" type="text/javascript"></script>
 	<script defer src="./js/htmx.min.js"></script>

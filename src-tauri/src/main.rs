@@ -14,14 +14,16 @@ mod asyncEngine;
 Imports
 ******************************************************** */
 use appCfg::{appSettings, gState, startCmdLine, tauriState};
+use flume::{Receiver, Sender};
 use include_dir::{include_dir, Dir};
-use loole::{Receiver, Sender};
+
 use once_cell::sync::OnceCell;
-use serde_json::json;
+use serde_json::{json, Value};
+use serialWrapper::{sCtrl, sManager, serialCtrl, serialSettings};
 use std::{
 	path::PathBuf,
 	sync::{Arc, RwLock},
-	thread::{sleep, spawn},
+	thread::{self, sleep, spawn},
 	time::Duration,
 };
 
@@ -33,12 +35,15 @@ use crate::{
 };
 pub mod appCfg;
 pub mod asyncEngine;
+pub mod serial;
+pub mod serialWrapper;
 /* ********************************************************
 	Enums & Structures
 ******************************************************** */
 static GLOBALCFG: OnceCell<appSettings> = OnceCell::new();
 static mut TAURI_STATE: OnceCell<tauriState> = OnceCell::new();
 static G_STATE: OnceCell<gState> = OnceCell::new();
+static SERIAL_CTRL: OnceCell<sCtrl> = OnceCell::new();
 
 //static PROJECT_DIR: Dir = include_dir!("../../../ui/views/");
 /* ********************************************************
@@ -98,6 +103,17 @@ fn main() {
 			.on_menu_event(|event| match event.menu_item_id() {
 				"quit" => {
 					println!("PRESSED QUIT!!!");
+
+					match SERIAL_CTRL.get() {
+						Some(ctx) => {
+							println!("Asda");
+							ctx.tx.send(serialCtrl::EXIT_THREAD).expect("Failed to send");
+						}
+						None => {
+							println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+						}
+					}
+
 					std::process::exit(0);
 				}
 				"close" => {
@@ -113,14 +129,26 @@ fn main() {
 				resultJson,
 				fn_with_error_handling,
 				get_status,
-				set_status
+				set_status,
+				send_cfg,
+				send_cmd,
+				ctrl_play,
+				ctrl_pause
 			])
 			.setup(|app| {
 				{
 					let mut xx = tauriEngineWrapper.0.write().unwrap();
 					xx.set_handle(app.handle().clone());
 				}
-				let (_tx, rx): (Sender<internalMail>, Receiver<internalMail>) = loole::bounded(128);
+				let (mut sMan, mut sCtrl) = sManager::new(app.handle().clone());
+
+				let thread = thread::spawn(move || {
+					sMan.ctrl_loop();
+				});
+				sCtrl.thread_handle = Some(thread);
+				SERIAL_CTRL.set(sCtrl).expect("#1 | FAILED TO CREATE SERIAL_CTRL CTX");
+
+				let (_tx, rx): (Sender<internalMail>, Receiver<internalMail>) = flume::bounded(128);
 				app.manage(tauriEngineWrapper);
 
 				tauri::async_runtime::spawn(async move {
@@ -257,6 +285,75 @@ fn testFile() -> String {
 	let my_str = "fdgsdfgasdfgfdg";
 	include_str!("../rustfmt.toml");
 	my_str.to_owned()
+}
+
+#[tauri::command]
+fn send_cmd(req: String) -> Result<(), String> {
+	let Some(theContext) = SERIAL_CTRL.get() else {
+		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
+	};
+
+	match serde_json::from_str::<serialCtrl>(req.as_str()) {
+		Ok(pkg) => {
+			let tx = theContext.tx.clone();
+			if let Err(e) = tx.send(pkg) {
+				println!("FAILED SEND | {}", e);
+			}
+			Ok(())
+		}
+		Err(e) => {
+			println!("asdasd");
+			Err(format!("Failed to parse JSON {}", e))
+		}
+	}
+}
+
+#[tauri::command]
+fn send_cfg(blah: String) -> Result<String, String> {
+	let Some(theContext) = SERIAL_CTRL.get() else {
+		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
+	};
+
+	println!("RX BACKEND | {}", blah);
+
+	let settings = serde_json::from_str::<serialSettings>(blah.as_str()).expect("FAILED TO PARSE JSON");
+
+	let tx = theContext.tx.clone();
+	if let Err(e) = tx.send(serialCtrl::NEW(settings)) {
+		println!("FAILED SEND | {}", e);
+	}
+
+	Ok("Just a message".to_string())
+}
+
+#[tauri::command]
+fn ctrl_play() -> Result<String, String> {
+	let Some(theContext) = SERIAL_CTRL.get() else {
+		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
+	};
+
+	let tx = theContext.tx.clone();
+	match tx.send(serialCtrl::PLAY) {
+		Ok(_) => Ok("PLAY COMMAND sent successfully!".to_string()),
+		Err(e) => Err(format!("PLAY COMMAND FAILED TO SEND {}", e)),
+	}
+}
+
+#[tauri::command]
+fn ctrl_pause() -> Result<String, String> {
+	let Some(theContext) = SERIAL_CTRL.get() else {
+		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
+		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
+	};
+
+	let tx = theContext.tx.clone();
+	match tx.send(serialCtrl::PAUSE) {
+		Ok(_) => Ok("PAUSE COMMAND sent successfully!".to_string()),
+		Err(e) => Err(format!("PAUSE COMMAND FAILED TO SEND {}", e)),
+	}
 }
 
 /* ********************************************************
