@@ -42,6 +42,7 @@ pub enum serialCtrl {
 	PAUSE,
 	EXIT,
 	EXIT_THREAD,
+	SERIAL_EXIT,
 	NEW(serialSettings),
 }
 #[derive(Debug)]
@@ -150,6 +151,7 @@ impl sManager {
 								tx,
 								id,
 								self.tauri_handle.clone().expect("FAILED TO EXTRACT APP HANDLE").clone(),
+								self.tx.clone(),
 							);
 							self.send_target = Some(ss.get_tx());
 							let thread = thread::spawn(move || {
@@ -157,6 +159,7 @@ impl sManager {
 							});
 							self.thread_handle = Some(thread);
 						} else {
+							println!("Failed to validate settings!");
 							if let Some(handle) = self.tauri_handle.clone() {
 								if handle
 									.emit_all("threadCtrl", "This event is show in frontend!!!")
@@ -172,9 +175,15 @@ impl sManager {
 						println!("Received kill thread command!");
 						break;
 					}
+
+					serialCtrl::SERIAL_EXIT => {
+						println!("Serial thread exit");
+						self.send_target = None;
+						self.thread_handle = None;
+					}
 				},
 				Err(e) => {
-					println!("{e}");
+					println!("sMan | {e}");
 				}
 			}
 		}
@@ -182,7 +191,7 @@ impl sManager {
 		println!("Exiting control loop!");
 	}
 	pub fn validate_settings(&self, _settings: &serialSettings) -> bool {
-		false
+		true
 	}
 
 	pub fn get_current_settings(&self) -> bool {

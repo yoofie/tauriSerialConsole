@@ -21,7 +21,7 @@ use std::time::Duration;
 use loole::{Receiver, Sender};
 use tauri::AppHandle;
 
-use crate::serialWrapper::{frameType, message, serialSettings};
+use crate::serialWrapper::{frameType, message, serialCtrl, serialSettings};
 
 /* ********************************************************
 	Public APIs
@@ -36,12 +36,19 @@ pub struct serial {
 	fType: frameType,
 	id: u8,
 	tauriHandle: AppHandle,
+	sManagerTx: Sender<serialCtrl>,
 }
 /* ********************************************************
 	Private APIs
 ******************************************************** */
 impl serial {
-	pub fn new(cfg: serialSettings, send: Sender<message>, id: u8, handle: AppHandle) -> serial {
+	pub fn new(
+		cfg: serialSettings,
+		send: Sender<message>,
+		id: u8,
+		handle: AppHandle,
+		sMan: Sender<serialCtrl>,
+	) -> serial {
 		let decoder = cfg.decoder.clone();
 		serial {
 			txrx: loole::unbounded::<bool>(),
@@ -52,6 +59,7 @@ impl serial {
 			fType: decoder,
 			id: 0,
 			tauriHandle: handle,
+			sManagerTx: sMan,
 		}
 	}
 
@@ -60,10 +68,11 @@ impl serial {
 	}
 
 	pub fn run_serial(&mut self) {
+		println!("RUNNING SERIAL Thread!!");
 		let sPort = serialport::new(self.settings.port_name.as_str(), self.settings.baud_rate)
 			.timeout(Duration::from_millis(20))
 			.open();
-
+		dbg!(&self.settings);
 		match sPort {
 			Ok(ref port) => {
 				println!(
@@ -130,16 +139,18 @@ impl serial {
 					}
 					Err(e) => {
 						eprintln!("Failed to open \"{}\". Error: {}", self.settings.port_name.clone(), e);
-						::std::process::exit(1);
+						//::std::process::exit(1);
 					}
 				}
 			}
 			Err(e) => {
 				eprintln!("Failed to open \"{}\". Error: {}", self.settings.port_name.clone(), e);
-				::std::process::exit(1);
+				//::std::process::exit(1);
 			}
 		}
-
+		if let Err(e) = self.sManagerTx.send(serialCtrl::EXIT) {
+			println!("SERIAL THREAD FAIL | FAILED TO SEND!!! | {}", e);
+		}
 		println!("Exiting Serial Thread #{}", self.id);
 	}
 
