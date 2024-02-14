@@ -306,19 +306,19 @@ fn send_cmd(cmd: String) -> Result<(), String> {
 
 #[tauri::command]
 fn send_cfg(blah: String) -> Result<String, String> {
-	/* let Some(theContext) = SERIAL_CTRL.get() else {
+	let Some(theContext) = SERIAL_CTRL.get() else {
 		println!("SERVER_AGENT | Error #4: Failed to get context reference :(");
 		return Err("FAILED TO GET SERIAL CONTEXT CONTROL".to_string());
-	}; */
+	};
 
 	println!("RX BACKEND | {}", blah);
 
-	/* let settings = serde_json::from_str::<serialSettings>(cmd).expect("FAILED TO PARSE JSON");
+	let settings = serde_json::from_str::<serialSettings>(blah.as_str()).expect("FAILED TO PARSE JSON");
 
 	let tx = theContext.tx.clone();
 	if let Err(e) = tx.send(serialCtrl::NEW(settings)) {
 		println!("FAILED SEND | {}", e);
-	} */
+	}
 
 	Ok("Just a message".to_string())
 }

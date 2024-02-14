@@ -55,7 +55,7 @@ pub struct serialSettings {
 	pub parity: u8,
 	pub stop_bits: u8,
 	pub port_name: String,
-	pub baud: u32,
+	pub baud_rate: u32,
 	pub decoder: frameType,
 }
 /* ********************************************************
@@ -86,7 +86,7 @@ impl sCtrl {
 		}
 	}
 
-	pub fn ctrl_loop(mut self) {
+	pub fn ctrl_loop(&mut self) {
 		println!("CTRL RX THREAD");
 		loop {
 			match self.rx.recv() {

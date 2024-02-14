@@ -60,7 +60,7 @@ impl serial {
 	}
 
 	pub fn run_serial(&mut self) {
-		let sPort = serialport::new(self.settings.port_name.as_str(), self.settings.baud)
+		let sPort = serialport::new(self.settings.port_name.as_str(), self.settings.baud_rate)
 			.timeout(Duration::from_millis(20))
 			.open();
 
@@ -68,7 +68,7 @@ impl serial {
 			Ok(ref port) => {
 				println!(
 					"Receiving data on {} at {} baud:",
-					&self.settings.port_name, &self.settings.baud
+					&self.settings.port_name, &self.settings.baud_rate
 				);
 
 				port.clear(serialport::ClearBuffer::All).unwrap_or_else(|x| {
@@ -79,7 +79,7 @@ impl serial {
 						println!(
 							"Receiving data on {} at {} baud:",
 							&self.settings.port_name.clone(),
-							&self.settings.baud.clone()
+							&self.settings.baud_rate.clone()
 						);
 
 						port.clear(serialport::ClearBuffer::All).unwrap_or_else(|x| {

@@ -1,7 +1,7 @@
 
 function call_cfg() {
 	var finalJson = {};
-	finalJson["com_channel"] = document.getElementById("com_channel").value;
+	finalJson["port_name"] = document.getElementById("com_channel").value;
 	//finalJson["baud_rate"] = parseInt(document.getElementById("baud_rate").value);
   
 	if (document.getElementById("baud_rate").value == "CUSTOM") {
@@ -14,9 +14,9 @@ function call_cfg() {
 		document.getElementById("baud_rate").value
 	  );
 	}
-  
+	
 	finalJson["parity"] = parseInt(document.getElementById("parity").value);
-	finalJson["stopBits"] = parseInt(document.getElementById("stopBits").value);
+	finalJson["stop_bits"] = parseInt(document.getElementById("stopBits").value);
   
 	if (document.getElementById("decoder").value == "CUSTOM") {
 	  console.log("SELECTED CUSTOM");
@@ -30,7 +30,6 @@ function call_cfg() {
 	console.log(json_cfg_string);
   
 	//invokee('send_cfg', { cmd: json_cfg_string })
-	invoke("send_cfg", { blah: json_cfg_string }).then(message => console.log(message))
-    .catch(error => console.error(error));
+	invoke("send_cfg", { blah: json_cfg_string }).then(message => console.log(message));
   }
   
