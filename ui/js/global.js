@@ -173,7 +173,7 @@ listen("c1", ev => {
 });
 
 listen("serialEvent", ev => {
-	console.log(`SERIAL EVENT | ${ev.payload}`);
+	//console.log(`SERIAL EVENT | ${ev.payload}`);
 	serialData.push(ev.payload);
   });
 
@@ -195,7 +195,7 @@ function addRow() {
   c2.innerText = userx.name;
   c3.innerText = userx.value;
 
-  console.log(`CONSOLE LENGTH = ${logData.length}`);
+  //console.log(`CONSOLE LENGTH = ${logData.length}`);
 }
 
 var prev_length = 0;
