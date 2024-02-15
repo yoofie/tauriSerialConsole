@@ -225,6 +225,21 @@
 
 			<details open>
 				<summary>LOG</summary>
+				<div class="selectionContainer">
+					<div class="box">
+						<h3>Play/Pause</h3>
+						<form name="myform" action="" method="POST">
+							<input type="button" name="button" value="Play/Pause" onClick="ctrl_play()" />
+						</form>
+					</div>
+		
+					<div class="box">
+						<h3>Reset</h3>
+						<form name="myform" action="" method="POST">
+							<input type="button" name="button" value="Reset" onClick="clearBuffer()" />
+						</form>
+					</div>
+				</div>
 				<div id="counter">0</div>
 				<button id="btn" onclick="addRow()">Add row</button>
 				<button id="btn" onclick="callJson()">Call JSON</button>
