@@ -226,7 +226,7 @@ function addSerialData() {
 			c2.innerText = userx.name;
 			c3.innerText = serialData[index + i];
 			
-			console.log(`CONSOLE LENGTH = ${logData.length}`);
+			//console.log(`CONSOLE LENGTH = ${logData.length}`);
 		}
 	}
   
@@ -255,7 +255,7 @@ function appendLog(target, logItem) {
   console.log("YESS");
   var logx2 = document.getElementById("logx2");
   var rxData = JSON.parse(logItem);
-  console.log(`RXDATA2 = ${rxData.name} / ${rxData.value}`);
+  //console.log(`RXDATA2 = ${rxData.name} / ${rxData.value}`);
   logData.push(rxData);
 
   console.log(

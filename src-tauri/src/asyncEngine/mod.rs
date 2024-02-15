@@ -49,15 +49,15 @@ pub async fn asyncEngineLoop(rx: Receiver<internalMail>) {
 
 	let mut counter = 0;
 	loop {
+		//sleep(Duration::from_millis(100)).await;
 		std::thread::sleep(std::time::Duration::from_secs(2));
 		// emit a download progress event to all listeners registed in the webview
 		let msg = format!("{{\"name\": \"EVENT_NAME\", \"value\": {}}}", counter);
 		window.emit_all("wowza", msg).unwrap();
 		counter += 1;
-		if counter > 40 {
+		if counter > 3 {
 			println!("EXITING ASYNC LOOP!");
 			break;
 		}
 	}
-	()
 }
