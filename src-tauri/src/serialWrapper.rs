@@ -146,7 +146,9 @@ impl sManager {
 						if sState == serialState::RUNNING {
 							println!("RX'd EXIT CMD");
 							if let Some(serial_tx) = self.send_target.clone() {
-								serial_tx.send(true).expect("Failed to send serial kill command");
+								if let Err(e) = serial_tx.send(true) {
+									println!("Failed to send serial kill command! {}", e);
+								}
 								self.send_target = None;
 								self.thread_handle = None;
 								self.serial_settings = None;
@@ -195,12 +197,9 @@ impl sManager {
 					}
 
 					serialCtrl::SERIAL_EXIT => {
-						if sState == serialState::RUNNING {
-							println!("Serial thread exit");
-							self.send_target = None;
-							self.thread_handle = None;
-							sState = serialState::IDLE;
-						}
+						self.send_target = None;
+						self.thread_handle = None;
+						sState = serialState::IDLE;
 					}
 				},
 				Err(e) => {

@@ -148,7 +148,7 @@ impl serial {
 				//::std::process::exit(1);
 			}
 		}
-		if let Err(e) = self.sManagerTx.send(serialCtrl::EXIT) {
+		if let Err(e) = self.sManagerTx.send(serialCtrl::SERIAL_EXIT) {
 			println!("SERIAL THREAD FAIL | FAILED TO SEND!!! | {}", e);
 		}
 		println!("Exiting Serial Thread #{}", self.id);
