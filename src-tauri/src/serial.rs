@@ -73,73 +73,58 @@ impl serial {
 			.timeout(Duration::from_millis(20))
 			.open();
 		dbg!(&self.settings);
+
 		match sPort {
-			Ok(ref port) => {
+			Ok(mut port) => {
 				println!(
 					"Receiving data on {} at {} baud:",
-					&self.settings.port_name, &self.settings.baud_rate
+					&self.settings.port_name.clone(),
+					&self.settings.baud_rate.clone()
 				);
 
 				port.clear(serialport::ClearBuffer::All).unwrap_or_else(|x| {
 					println!("Error clearing buffer {}", x);
 				});
-				match sPort {
-					Ok(mut port) => {
-						println!(
-							"Receiving data on {} at {} baud:",
-							&self.settings.port_name.clone(),
-							&self.settings.baud_rate.clone()
-						);
+				self.iBuffer.clear();
 
-						port.clear(serialport::ClearBuffer::All).unwrap_or_else(|x| {
-							println!("Error clearing buffer {}", x);
-						});
-						self.iBuffer.clear();
+				loop {
+					match port.bytes_to_read() {
+						Ok(value) if value > 0 => {
+							println!("\nGot {} bytes", value);
+							let _ = port.read_to_end(&mut self.iBuffer);
+							self.iBuffer.iter().for_each(|f| print!("{:#x} ", f));
+							println!("");
+							self.read_bytes();
 
-						loop {
-							match port.bytes_to_read() {
-								Ok(value) if value > 0 => {
-									println!("\nGot {} bytes", value);
-									let _ = port.read_to_end(&mut self.iBuffer);
-									self.iBuffer.iter().for_each(|f| print!("{:#x} ", f));
-									println!("");
-									self.read_bytes();
-
-									self.iBuffer.clear();
+							self.iBuffer.clear();
+						}
+						Ok(_value) => {}
+						Err(error) => {
+							println!("Got errors!");
+							match error.kind() {
+								serialport::ErrorKind::NoDevice => {
+									println!("ERROR #2 | NO DEVICE | {}", error.description);
 								}
-								Ok(_value) => {}
-								Err(error) => {
-									println!("Got errors!");
-									match error.kind() {
-										serialport::ErrorKind::NoDevice => {
-											println!("ERROR #2 | NO DEVICE | {}", error.description);
-										}
-										serialport::ErrorKind::InvalidInput => {
-											println!("ERROR #2 | INVALID INPUT | {}", error.description);
-										}
-										serialport::ErrorKind::Unknown => {
-											println!("ERROR #2 | UNKNOWN | {}", error.description);
-										}
-										serialport::ErrorKind::Io(_) => {
-											println!("ERROR #2 | I/O | {}", error.description);
-										}
-									}
+								serialport::ErrorKind::InvalidInput => {
+									println!("ERROR #2 | INVALID INPUT | {}", error.description);
 								}
-							}
-
-							match self.txrx.1.try_recv() {
-								Ok(value) => {
-									if value {
-										break;
-									}
+								serialport::ErrorKind::Unknown => {
+									println!("ERROR #2 | UNKNOWN | {}", error.description);
 								}
-								Err(_) => {}
+								serialport::ErrorKind::Io(_) => {
+									println!("ERROR #2 | I/O | {}", error.description);
+								}
 							}
 						}
 					}
-					Err(e) => {
-						eprintln!("Failed to open \"{}\". Error: {}", self.settings.port_name.clone(), e);
-						//::std::process::exit(1);
+
+					match self.txrx.1.try_recv() {
+						Ok(value) => {
+							if value {
+								break;
+							}
+						}
+						Err(_) => {}
 					}
 				}
 			}
@@ -148,6 +133,7 @@ impl serial {
 				//::std::process::exit(1);
 			}
 		}
+
 		if let Err(e) = self.sManagerTx.send(serialCtrl::SERIAL_EXIT) {
 			println!("SERIAL THREAD FAIL | FAILED TO SEND!!! | {}", e);
 		}

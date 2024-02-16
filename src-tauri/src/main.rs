@@ -15,10 +15,9 @@ Imports
 ******************************************************** */
 use appCfg::{appSettings, gState, startCmdLine, tauriState};
 use flume::{Receiver, Sender};
-use include_dir::{include_dir, Dir};
 
 use once_cell::sync::OnceCell;
-use serde_json::{json, Value};
+use serde_json::json;
 use serialWrapper::{sCtrl, sManager, serialCtrl, serialSettings};
 use std::{
 	path::PathBuf,
@@ -27,7 +26,7 @@ use std::{
 	time::Duration,
 };
 
-use tauri::{AboutMetadata, AppHandle, CustomMenuItem, Manager, Menu, MenuItem, Submenu};
+use tauri::{AboutMetadata, CustomMenuItem, Manager, Menu, MenuItem, Submenu};
 
 use crate::{
 	appCfg::sWrapper,

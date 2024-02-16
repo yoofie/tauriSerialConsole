@@ -12,15 +12,11 @@
 	Imports
 ******************************************************** */
 
-use std::{
-	thread::{self, JoinHandle},
-	time::Duration,
-};
+use std::thread::{self, JoinHandle};
 
-use loole::{unbounded, Receiver, Sender};
+use loole::{Receiver, Sender};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use tauri::{AppHandle, Manager};
 
 use crate::serial::serial;

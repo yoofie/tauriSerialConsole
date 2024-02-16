@@ -31,7 +31,7 @@ pub mod ffiTypes;
 	Private APIs
 ******************************************************** */
 
-pub async fn asyncEngineLoop(rx: Receiver<internalMail>) {
+pub async fn asyncEngineLoop(_rx: Receiver<internalMail>) {
 	println!("ASYNC ENGINE RUNNING");
 	//let (tx, rx): (Sender<internalMail>, Receiver<internalMail>) = loole::bounded(128);
 	let tt = unsafe { TAURI_STATE.get().unwrap() };
