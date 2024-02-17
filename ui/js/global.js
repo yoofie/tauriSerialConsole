@@ -87,13 +87,7 @@ document.body.appendChild(container);
 
 let userx = "Volvo";
 
-function myFunction() {
-  invoke("greet", { name: "yesss" })
-    // `invoke` returns a Promise
-    .then(response => {
-      window.header.innerHTML = response;
-    });
-}
+
 
 function changeColor() {
   document.getElementById("testDiv").style.backgroundColor = "#00FF00";
@@ -121,26 +115,6 @@ function callRust3() {
     .catch(error => console.error(error));
 }
 
-function callJson() {
-  invoke("resultJson").then(message => {
-    user = JSON.parse(message);
-    logData.push(user);
-    console.log(`user = ${logData}`);
-
-    console.log(`NAME = ${user.name}`);
-    console.log(`Value = ${user.value}`);
-    userx = user;
-    console.log(`Value = ${userx.value}`);
-  });
-}
-
-function make_event() {
-  console.log("MAKE EVENT PRESSED!");
-  reset();
-  emit("a1", "This is a message");
-  emit("clickr", "sdfsdf sd fsd f");
-}
-
 emit("clickr", "WOWZA");
 emit("a1", "This is a message");
 
@@ -161,42 +135,12 @@ listen("b1", ev => {
   console.log(`Other properties:\n\n${ev.id}\n${ev.event}`);
 });
 
-// listen second event from backend
-listen("c2", ev => {
-  console.log("I have next event!!!");
-});
 
-// listen third event from backend
-listen("c1", ev => {
-  console.log('Hi i should be displayed before "c2" event message!!!');
-  emit("fr_response", "message");
-});
 
 listen("serialEvent", ev => {
 	//console.log(`SERIAL EVENT | ${ev.payload}`);
 	serialData.push(ev.payload);
   });
-
-function addRow() {
-  // Get the table element in which you want to add row
-  let table = document.getElementById("logTable");
-
-  // Create a row using the inserRow() method and
-  // specify the index where you want to add the row
-  let row = table.insertRow(-1); // We are adding at the end
-
-  // Create table cells
-  let c1 = row.insertCell(0);
-  let c2 = row.insertCell(1);
-  let c3 = row.insertCell(2);
-
-  // Add data to c1 and c2
-  c1.innerText = row.rowIndex;
-  c2.innerText = userx.name;
-  c3.innerText = userx.value;
-
-  //console.log(`CONSOLE LENGTH = ${logData.length}`);
-}
 
 var prev_length = 0;
 
@@ -223,7 +167,7 @@ function addSerialData() {
 			
 			// Add data to c1 and c2
 			c1.innerText = row.rowIndex;
-			c2.innerText = userx.name;
+			c2.innerText = serialData[index + i];
 			c3.innerText = serialData[index + i];
 			
 			//console.log(`CONSOLE LENGTH = ${logData.length}`);
