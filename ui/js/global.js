@@ -90,29 +90,9 @@ let userx = "Volvo";
 
 
 function changeColor() {
-  document.getElementById("testDiv").style.backgroundColor = "#00FF00";
-  document.getElementById("testDiv").style.color = "#000";
-  document.getElementById("testDiv").style.padding = "5px";
-}
-
-function reset() {
-  number = 0;
-}
-
-function callRust() {
-  invoke("my_custom_command", { invokeMessage: "Hello!" });
-}
-
-function callRust2() {
-  invoke("my_custom_command_with_result_value").then(message =>
-    console.log(message)
-  );
-}
-
-function callRust3() {
-  invoke("fn_with_error_handling", { number: 3 })
-    .then(message => console.log(message))
-    .catch(error => console.error(error));
+  document.getElementById("box").style.backgroundColor = "#00FF00";
+  document.getElementById("box").style.color = "#000";
+  document.getElementById("box").style.padding = "5px";
 }
 
 // listen a event emitted from the backend
@@ -203,7 +183,6 @@ function appendLog(target, logItem) {
 }
 
 var counter = document.querySelector("#counter");
-
 var number = 0;
 
 
@@ -226,15 +205,3 @@ listen("wowza", ev => {
   console.log(ev.payload);
   appendLog("logx", ev.payload);
 });
-
-/* function testResults(form) {
-  let inputValue = form.inputbox.value;
-  let formData = new FormData(form);
-  let object = {};
-  formData.forEach(function(value, key) {
-    object[key] = value;
-  });
-  var json = JSON.stringify(object);
-  console.log(json);
-}
- */

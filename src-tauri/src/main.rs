@@ -87,17 +87,8 @@ fn main() {
 		******************************************************** */
 		tauri::Builder::default()
 			.invoke_handler(tauri::generate_handler![
-				greet,
-				my_custom_command,
-				my_custom_command_with_result_value,
-				resultJson,
-				fn_with_error_handling,
-				set_status,
-				send_cfg,
-				send_cmd,
-				ctrl_play,
-				ctrl_pause
-			]) 
+				resultJson, set_status, send_cfg, send_cmd, ctrl_play, ctrl_pause
+			])
 			.setup(|app| {
 				{
 					let mut xx = tauriEngineWrapper.0.write().unwrap();
@@ -144,23 +135,6 @@ fn main() {
 }
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-	format!("Hello, {}!", name)
-}
-
-#[tauri::command]
-fn my_custom_command(invoke_message: String) {
-	println!("I was invoked from JS, with this message: {}", invoke_message);
-}
-
-#[tauri::command]
-fn my_custom_command_with_result_value() -> String {
-	//"<h1>Hello from Rust!</h1>\n<blockquote>This is a message</blockquote>".into()
-	let data = include_str!("../../ui/views/testFile.html");
-	data.into()
-}
-
-#[tauri::command]
 fn resultJson() -> String {
 	"{\"name\": \"Markus\", \"value\": 5}".into()
 }
@@ -178,17 +152,6 @@ fn set_status(state: tauri::State<sWrapper>) -> String {
 		}
 	);
 	theState.to_string()
-}
-
-#[tauri::command]
-fn fn_with_error_handling(number: u32) -> Result<String, String> {
-	if number % 2 == 0 {
-		Ok("This worked!".into())
-	} else {
-		Err("ERROR RESULT: PROVIDED NUMBER IS ODD!!".into())
-	}
-	// If something fails
-	// If it worked
 }
 
 #[tauri::command]
