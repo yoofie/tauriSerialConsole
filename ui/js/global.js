@@ -115,9 +115,6 @@ function callRust3() {
     .catch(error => console.error(error));
 }
 
-emit("clickr", "WOWZA");
-emit("a1", "This is a message");
-
 // listen a event emitted from the backend
 // https://github.com/tauri-apps/tauri/issues/3276
 emit("a1", "This is a message");
@@ -183,14 +180,6 @@ Table.innerHTML = `<thead>
 <th style="width:10%">Time</th>
 <th>Message</th>
 </thead>`;
-
-	/* var elmtTable = document.getElementById('logTable');
-	var tableRows = elmtTable.getElementsByTagName('tr');
-	var rowCount = tableRows.length;
-
-for (var x=rowCount-1; x>0; x--) {
-   elmtTable.removeChild(tableRows[x]);
-} */
 serialData.length = 0;
 }
 
@@ -238,7 +227,7 @@ listen("wowza", ev => {
   appendLog("logx", ev.payload);
 });
 
-function testResults(form) {
+/* function testResults(form) {
   let inputValue = form.inputbox.value;
   let formData = new FormData(form);
   let object = {};
@@ -248,3 +237,4 @@ function testResults(form) {
   var json = JSON.stringify(object);
   console.log(json);
 }
+ */

@@ -1,4 +1,5 @@
 @import "https://rsms.me/inter/inter.css";
+
 p,
 ol,
 li,
@@ -17,11 +18,12 @@ ol li {
 }
 
 
-html, body {
+html,
+body {
 	/* font-family: 'Courier New', Courier, monospace; */
 	background-color: #000;
-	color:#ccc;
-	padding:0px;
+	color: #ccc;
+	padding: 0px;
 	margin: 0px;
 	font-family: 'Inter', Verdana, 'Times New Roman', Times, serif;
 	font-size: 13.5px;
@@ -31,20 +33,33 @@ html, body {
 
 
 
+th,
+table tr:nth-child(2n) td {
+	background-color: #161616;
+}
 
-th,
-table.data.zebra tr:nth-child(2n) td,
-table.data.zebra tr:nth-child(2n+1) td {
-	background-color: #000;
-	border-bottom: 1px solid #333
-}
-th,
-table.data.zebra tr:nth-child(2n) td :hover {
-	background-color: rgba(228, 228, 197, 0.616);
-}
 th {
 	text-align: left;
 	background-color: #333
+}
+
+tr,
+td,
+th {
+	padding: 5px;
+	margin: 0px
+}
+
+tr:hover {
+	background: rgba(92, 100, 91, 0.5);
+}
+
+tr:nth-child(even) {
+	background: rgba(56, 56, 56, 0.1)
+}
+
+td:hover {
+	background: rgba(121, 120, 118, 0.562)
 }
 
 hr {
@@ -185,10 +200,12 @@ details details summary {
 	color: #ffcaf6;
 }
 
-[x-cloak] { display: none; }
+[x-cloak] {
+	display: none;
+}
 
 .container {
-	margin:0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
 }
 
 a {
@@ -200,9 +217,9 @@ a:hover {
 }
 
 button {
-	color:#ffc185;
-	background:#111;
-	padding:2px;
+	color: #ffc185;
+	background: #111;
+	padding: 2px;
 	border: none;
 	text-align: center;
 	text-decoration: none;
@@ -212,8 +229,9 @@ button {
 	line-height: 23px;
 	letter-spacing: -0.35px;
 }
-button:hover{
-	background:#1d1d1d;
+
+button:hover {
+	background: #1d1d1d;
 }
 
 
@@ -223,14 +241,14 @@ button:hover{
 }
 
 .open_cf {
-	margin-left:300px;
+	margin-left: 300px;
 	/* transform: translateX(150px); */
 	transition: all 0.5s ease;
 }
 
 
 #inlineFrameExample {
-	width:100%;
-	height:100%;
-	border:1px solid red;
+	width: 100%;
+	height: 100%;
+	border: 1px solid red;
 }

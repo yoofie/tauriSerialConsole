@@ -16,7 +16,7 @@ function get_object(elementname) {
 	return object;
 }
 
-function testResults (form) {
+/* function testResults (form) {
 
 	var finalJson = {};
 
@@ -28,7 +28,7 @@ function testResults (form) {
 	finalJson["parityy"] = parseInt(document.getElementById("parity").value);
 	console.log(finalJson);
 	console.log(JSON.stringify(finalJson, null, 4));
-}
+} */
 
 function refresh_sources(){
 	var jsonOptions = JSON.parse(request.responseText);
