@@ -7,7 +7,7 @@
 	"withGlobalTauri": true
   },
   "package": {
-    "productName": "testGui1",
+    "productName": "serialConsole",
     "version": "0.1.0"
   },
   "tauri": {
@@ -56,10 +56,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 1400,
         "resizable": true,
-        "title": "TestGui1",
-        "width": 800
+        "title": "Serial Console",
+        "width": 1200
       }
     ]
   }
