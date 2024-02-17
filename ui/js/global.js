@@ -52,6 +52,7 @@ window.addEventListener("DOMContentLoaded", () => {
 //document.addEventListener('contextmenu', event => event.preventDefault());
 
 var logData = new Array();
+var serialData = new Array();
 var container = document.createElement("div");
 var config = {
   height: window.innerHeight,
@@ -86,62 +87,13 @@ document.body.appendChild(container);
 
 let userx = "Volvo";
 
-function myFunction() {
-  invoke("greet", { name: "yesss" })
-    // `invoke` returns a Promise
-    .then(response => {
-      window.header.innerHTML = response;
-    });
-}
+
 
 function changeColor() {
-  document.getElementById("testDiv").style.backgroundColor = "#00FF00";
-  document.getElementById("testDiv").style.color = "#000";
-  document.getElementById("testDiv").style.padding = "5px";
+  document.getElementById("box").style.backgroundColor = "#00FF00";
+  document.getElementById("box").style.color = "#000";
+  document.getElementById("box").style.padding = "5px";
 }
-
-function reset() {
-  number = 0;
-}
-
-function callRust() {
-  invoke("my_custom_command", { invokeMessage: "Hello!" });
-}
-
-function callRust2() {
-  invoke("my_custom_command_with_result_value").then(message =>
-    console.log(message)
-  );
-}
-
-function callRust3() {
-  invoke("fn_with_error_handling", { number: 3 })
-    .then(message => console.log(message))
-    .catch(error => console.error(error));
-}
-
-function callJson() {
-  invoke("resultJson").then(message => {
-    user = JSON.parse(message);
-    logData.push(user);
-    console.log(`user = ${logData}`);
-
-    console.log(`NAME = ${user.name}`);
-    console.log(`Value = ${user.value}`);
-    userx = user;
-    console.log(`Value = ${userx.value}`);
-  });
-}
-
-function make_event() {
-  console.log("MAKE EVENT PRESSED!");
-  reset();
-  emit("a1", "This is a message");
-  emit("clickr", "sdfsdf sd fsd f");
-}
-
-emit("clickr", "WOWZA");
-emit("a1", "This is a message");
 
 // listen a event emitted from the backend
 // https://github.com/tauri-apps/tauri/issues/3276
@@ -160,43 +112,63 @@ listen("b1", ev => {
   console.log(`Other properties:\n\n${ev.id}\n${ev.event}`);
 });
 
-// listen second event from backend
-listen("c2", ev => {
-  console.log("I have next event!!!");
-});
 
-// listen third event from backend
-listen("c1", ev => {
-  console.log('Hi i should be displayed before "c2" event message!!!');
-  emit("fr_response", "message");
-});
 
-function addRow() {
-  // Get the table element in which you want to add row
-  let table = document.getElementById("logTable");
+listen("serialEvent", ev => {
+	//console.log(`SERIAL EVENT | ${ev.payload}`);
+	serialData.push(ev.payload);
+  });
 
-  // Create a row using the inserRow() method and
-  // specify the index where you want to add the row
-  let row = table.insertRow(-1); // We are adding at the end
+var prev_length = 0;
 
-  // Create table cells
-  let c1 = row.insertCell(0);
-  let c2 = row.insertCell(1);
-  let c3 = row.insertCell(2);
+function addSerialData() {
+	var current_size = serialData.length;
 
-  // Add data to c1 and c2
-  c1.innerText = row.rowIndex;
-  c2.innerText = userx.name;
-  c3.innerText = userx.value;
+	if (current_size != prev_length) {
+		let diff = current_size - prev_length;
+		let index = prev_length;
+		prev_length = current_size;
+		for (let i = 0; i < diff; i++) { 
 
-  console.log(`CONSOLE LENGTH = ${logData.length}`);
+			// Get the table element in which you want to add row
+			let table = document.getElementById("logTable");
+
+			// Create a row using the inserRow() method and
+			// specify the index where you want to add the row
+			let row = table.insertRow(-1); // We are adding at the end
+			
+			// Create table cells
+			let c1 = row.insertCell(0);
+			let c2 = row.insertCell(1);
+			let c3 = row.insertCell(2);
+			
+			// Add data to c1 and c2
+			c1.innerText = row.rowIndex;
+			c2.innerText = serialData[index + i];
+			c3.innerText = serialData[index + i];
+			
+			//console.log(`CONSOLE LENGTH = ${logData.length}`);
+		}
+	}
+  
 }
+
+function clearBuffer(){
+	var Table = document.getElementById("logTable");
+Table.innerHTML = `<thead>
+<th style="width:10%">Index</th>
+<th style="width:10%">Time</th>
+<th>Message</th>
+</thead>`;
+serialData.length = 0;
+}
+
 
 function appendLog(target, logItem) {
   console.log("YESS");
   var logx2 = document.getElementById("logx2");
   var rxData = JSON.parse(logItem);
-  console.log(`RXDATA2 = ${rxData.name} / ${rxData.value}`);
+  //console.log(`RXDATA2 = ${rxData.name} / ${rxData.value}`);
   logData.push(rxData);
 
   console.log(
@@ -212,27 +184,19 @@ function appendLog(target, logItem) {
 
 var counter = document.querySelector("#counter");
 var number = 0;
-var firstRun = true;
-var countUp = function() {
-  if (firstRun) {
-    firstRun = false;
-    callJson();
-  }
 
-  // Increase number by 1
-  number++;
+
+var countUp = function() {
 
   // Update the UI
-  counter.textContent = number;
+  counter.textContent = serialData.length;
 
   // if the number is less than 500, run it again
-  if (number < 500) {
-    addRow();
-    config.height = window.innerHeight;
-    config.total = logData.length;
-    list.refresh(container, config);
-    window.requestAnimationFrame(countUp);
-  }
+	addSerialData();
+
+	config.height = window.innerHeight;
+	config.total = logData.length;
+	window.requestAnimationFrame(countUp);
 };
 
 // Start the animation
@@ -241,14 +205,3 @@ listen("wowza", ev => {
   console.log(ev.payload);
   appendLog("logx", ev.payload);
 });
-
-function testResults(form) {
-  let inputValue = form.inputbox.value;
-  let formData = new FormData(form);
-  let object = {};
-  formData.forEach(function(value, key) {
-    object[key] = value;
-  });
-  var json = JSON.stringify(object);
-  console.log(json);
-}

@@ -13,7 +13,7 @@ APP_NAME := "TauriTest GUI"
 
 # Build the project
 build:
-	@cargo build
+	@cargo build --manifest-path=src-tauri/Cargo.toml --offline
 
 rel: 
 	@cargo build --release

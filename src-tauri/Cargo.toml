@@ -1,11 +1,11 @@
 [package]
-name = "app"
+name = "serialConsole"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Serial Log viewer"
+authors = ["@phaistra"]
 license = ""
 repository = ""
-default-run = "app"
+default-run = "serialConsole"
 edition = "2021"
 rust-version = "1.60"
 
