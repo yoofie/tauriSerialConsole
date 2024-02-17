@@ -34,38 +34,45 @@
 					<span class="tooltip">Dashboard</span>
 				</li>
 				<li>
-					<a href="#">
-						<i class='bx bx-play' ></i>
+					<a href="#logList" onClick="ctrl_play()">
+						<i class='bx bx-play'></i>
 						<span class="links_name">Play</span>
 					</a>
 					<span class="tooltip">Order</span>
 				</li>
 
 				<li>
-					<a href="#">
-						<i class='bx bx-pause' ></i>
+					<a href="#logList" onClick="ctrl_pause()">
+						<i class='bx bx-pause'></i>
 						<span class="links_name">Pause</span>
 					</a>
 					<span class="tooltip">Pause</span>
 				</li>
 				<li>
-					<a href="#" hx-post="command:my_custom_command_with_result_value" hx-trigger="click"
-						hx-target=".contentFrame" hx-swap="innerHTML">
-						<i class="bx bx-chat"></i>
-						<span class="links_name">Message log</span>
+					<a href="#logList" onClick="clearBuffer()">
+						<i class='bx bx-sync' ></i>
+						<span class="links_name">Reset</span>
 					</a>
-					<span class="tooltip">Message log</span>
+					<span class="tooltip">Reset</span>
 				</li>
+				<!-- <li>
+					<a href="#" hx-post="command:my_custom_command_with_result_value" hx-trigger="click"
+						hx-target=".contentFrame" hx-swap="innerHTML" onClick="clearBuffer()">
+						<i class='bx bx-sync' ></i>
+						<span class="links_name">Reset</span>
+					</a>
+					<span class="tooltip">Reset</span>
+				</li> -->
 				<li>
-					<a href="#">
+					<a href="#logList">
 						<i class="bx bx-memory-card"></i>
 						<span class="links_name">Analytics</span>
 					</a>
 					<span class="tooltip">Analytics</span>
 				</li>
-				
 
-				
+
+
 				<li>
 					<a href="#">
 						<i class="bx bx-cog"></i>
@@ -86,134 +93,135 @@
 			</ul>
 		</div>
 		<div class="contentFrame">
-
-			<div class="serialCfg">
-				<div class="selectionContainer">
-					<div class="box">
-						<h3>Channel</h3>
-						<form id="channelForm" name="channelForm" action="" method="POST">
-							<select name="com_channel" id="com_channel">
-								<option value="COM4">COM 4</option>
-								<option value="COM5">COM 5</option>
-								<option value="COM6">COM 6</option>
-								<option value="audi">COM 7</option>
-							</select>
-
-
-						</form>
-					</div>
-
-					<div class="box">
-						<h3>Baud Rate</h3>
-						<form id="baudForm" name="baudForm" action="" method="POST">
-							<select name="baud_rate" id="baud_rate" onchange="baudrateChange()">
-								<option value="115200">115200</option>
-								<option value="9600">9600</option>
-								<option value="921600">921600</option>
-								<option value="CUSTOM">CUSTOM</option>
-							</select>
-
-							<div id="baudRateCustom">
-								<br>
-								<input id="baud_rate_custom" type="number" list="baudRateSuggestions" step="1000"
-									placeholder="115200" value="115200" />
-
-								<datalist id="baudRateSuggestions">
-									<option value="9600">
-									<option value="115200">
-									<option value="250000">
-								</datalist>
-							</div>
-						</form>
-					</div>
+			<details open>
+				<summary>CONFIG</summary>
+				<div class="serialCfg">
+					<div class="selectionContainer">
+						<div class="box">
+							<h3>Channel</h3>
+							<form id="channelForm" name="channelForm" action="" method="POST">
+								<select name="com_channel" id="com_channel">
+									<option value="COM4">COM 4</option>
+									<option value="COM5">COM 5</option>
+									<option value="COM6">COM 6</option>
+									<option value="audi">COM 7</option>
+								</select>
 
 
-					<div class="box">
-						<h3>Parity</h3>
-						<form id="parityForm" name="parityForm" action="" method="POST">
-							<!-- <select name="parity" id="parity">
+							</form>
+						</div>
+
+						<div class="box">
+							<h3>Baud Rate</h3>
+							<form id="baudForm" name="baudForm" action="" method="POST">
+								<select name="baud_rate" id="baud_rate" onchange="baudrateChange()">
+									<option value="115200">115200</option>
+									<option value="9600">9600</option>
+									<option value="921600">921600</option>
+									<option value="CUSTOM">CUSTOM</option>
+								</select>
+
+								<div id="baudRateCustom">
+									<br>
+									<input id="baud_rate_custom" type="number" list="baudRateSuggestions" step="1000"
+										placeholder="115200" value="115200" />
+
+									<datalist id="baudRateSuggestions">
+										<option value="9600">
+										<option value="115200">
+										<option value="250000">
+									</datalist>
+								</div>
+							</form>
+						</div>
+
+
+						<div class="box">
+							<h3>Parity</h3>
+							<form id="parityForm" name="parityForm" action="" method="POST">
+								<!-- <select name="parity" id="parity">
 								<option value="0">0</option>
 								<option value="1">1</option>
 								<option value="2">2</option>
 							</select> -->
 
-							<input id="parity" type="number" list="quantities" min="0" max="2" step="1" placeholder="0"
-								value="0">
-							<datalist id="quantities">
-								<option value="0">
-								<option value="1">
-							</datalist>
-						</form>
-					</div>
-
-					<div class="box">
-						<h3>Stop Bits</h3>
-						<form id="stopBitsForm" name="stopBitsForm" action="" method="POST">
-							<select name="stopBits" id="stopBits">
-								<option value="0">0</option>
-								<option value="1">1</option>
-								<option value="2">2</option>
-							</select>
-
-
-						</form>
-					</div>
-
-					<div class="box">
-						<h3>Decoder</h3>
-						<form name="decoderForm" id="decoderForm" action="" method="POST">
-							<select name="decoder" id="decoder" onchange="decoderChange()">
-								<option value="ASCII">ASCII</option>
-								<option value="COBS">COBS</option>
-								<option value="CUSTOM">CUSTOM</option>
-							</select>
-							<div id="customDecoderField">
-								<br>
-								<input id="customDecoder" list="customDecoderSuggestions" placeholder="ASCII"
-									value="ASCII" />
-								<datalist id="customDecoderSuggestions">
-									<option>Afghanistan</option>
-									<option>Åland Islands</option>
-									<option>Albania</option>
-									<option>Algeria</option>
-									<option>American Samoa</option>
-									<option>Andorra</option>
-									<option>Angola</option>
-									<option>Anguilla</option>
-									<option>Antarctica</option>
-									<option>Antigua and Barbuda</option>
-									<option>Argentina</option>
-									<option>Armenia</option>
-									<option>Aruba</option>
-									<option>Australia</option>
-									<option>Austria</option>
-									<option>Azerbaijan</option>
-									<option>Bahamas</option>
-									<option>Bahrain</option>
-									<option>Bangladesh</option>
-									<option>Barbados</option>
-									<option>Belarus</option>
-									<option>Belgium</option>
+								<input id="parity" type="number" list="quantities" min="0" max="2" step="1"
+									placeholder="0" value="0">
+								<datalist id="quantities">
+									<option value="0">
+									<option value="1">
 								</datalist>
-							</div>
+							</form>
+						</div>
 
-						</form>
+						<div class="box">
+							<h3>Stop Bits</h3>
+							<form id="stopBitsForm" name="stopBitsForm" action="" method="POST">
+								<select name="stopBits" id="stopBits">
+									<option value="0">0</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+								</select>
+
+
+							</form>
+						</div>
+
+						<div class="box">
+							<h3>Decoder</h3>
+							<form name="decoderForm" id="decoderForm" action="" method="POST">
+								<select name="decoder" id="decoder" onchange="decoderChange()">
+									<option value="ASCII">ASCII</option>
+									<option value="COBS">COBS</option>
+									<option value="CUSTOM">CUSTOM</option>
+								</select>
+								<div id="customDecoderField">
+									<br>
+									<input id="customDecoder" list="customDecoderSuggestions" placeholder="ASCII"
+										value="ASCII" />
+									<datalist id="customDecoderSuggestions">
+										<option>Afghanistan</option>
+										<option>Åland Islands</option>
+										<option>Albania</option>
+										<option>Algeria</option>
+										<option>American Samoa</option>
+										<option>Andorra</option>
+										<option>Angola</option>
+										<option>Anguilla</option>
+										<option>Antarctica</option>
+										<option>Antigua and Barbuda</option>
+										<option>Argentina</option>
+										<option>Armenia</option>
+										<option>Aruba</option>
+										<option>Australia</option>
+										<option>Austria</option>
+										<option>Azerbaijan</option>
+										<option>Bahamas</option>
+										<option>Bahrain</option>
+										<option>Bangladesh</option>
+										<option>Barbados</option>
+										<option>Belarus</option>
+										<option>Belgium</option>
+									</datalist>
+								</div>
+
+							</form>
+						</div>
+
+						<div class="lastbox">
+							<h3>&nbsp;</h3>
+							<form name="myform" action="" method="POST">
+								<input type="button" name="button" value="Refresh" onClick="call_cfg()" />
+								<input type="button" name="button" value="Submit" onClick="call_cfg()" />
+							</form>
+						</div>
+
 					</div>
-
-					<div class="lastbox">
-						<h3>&nbsp;</h3>
-						<form name="myform" action="" method="POST">
-							<input type="button" name="button" value="Refresh" onClick="call_cfg()" />
-							<input type="button" name="button" value="Submit" onClick="call_cfg()" />
-						</form>
-					</div>
-
 				</div>
-			</div>
+			</details>
 
-			<h1 id="header">INDEX PAGE</h1>
 
-			<details open>
+			<details id="logList" open>
 				<summary>LOG</summary>
 				<div class="selectionContainer">
 					<div class="box">
@@ -222,7 +230,7 @@
 							<input type="button" name="button" value="Play/Pause" onClick="ctrl_play()" />
 						</form>
 					</div>
-		
+
 					<div class="box">
 						<h3>Reset</h3>
 						<form name="myform" action="" method="POST">
@@ -248,7 +256,7 @@
 						<th style="width:10%">Time</th>
 						<th>Message</th>
 					</thead>
-					
+
 				</table>
 			</details>
 
