@@ -111,28 +111,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "080e9890a082662b09c1ad45f567faeeb47f22b5fb23895fbe1e651e718e25ca"
 
 [[package]]
-name = "app"
-version = "0.1.0"
-dependencies = [
- "bytes",
- "clap",
- "cobs",
- "flume",
- "include_dir",
- "loole",
- "nanoid",
- "once_cell",
- "rand 0.8.5",
- "serde",
- "serde_json",
- "serialport",
- "static-toml",
- "tauri",
- "tauri-build",
- "tokio",
-]
-
-[[package]]
 name = "atk"
 version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2551,6 +2529,28 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.48",
+]
+
+[[package]]
+name = "serialConsole"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "clap",
+ "cobs",
+ "flume",
+ "include_dir",
+ "loole",
+ "nanoid",
+ "once_cell",
+ "rand 0.8.5",
+ "serde",
+ "serde_json",
+ "serialport",
+ "static-toml",
+ "tauri",
+ "tauri-build",
+ "tokio",
 ]
 
 [[package]]
