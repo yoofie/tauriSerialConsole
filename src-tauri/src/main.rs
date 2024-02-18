@@ -18,15 +18,14 @@ use flume::{Receiver, Sender};
 
 use once_cell::sync::OnceCell;
 use serde_json::json;
-use serialWrapper::{sCtrl, sManager, serialCtrl, serialSettings};
+use serialWrapper::{sCtrl, sManager, serialCtrl, serialSettings, serialState};
 use std::{
 	path::PathBuf,
-	sync::{Arc, RwLock},
-	thread::{self, sleep, spawn},
-	time::Duration,
+	sync::{Arc, Mutex, RwLock},
+	thread,
 };
 
-use tauri::{AboutMetadata, CustomMenuItem, Manager, Menu, MenuItem, Submenu};
+use tauri::{Manager, State};
 
 use crate::{
 	appCfg::sWrapper,
@@ -52,7 +51,7 @@ static SERIAL_CTRL: OnceCell<sCtrl> = OnceCell::new();
 struct Payload {
 	message: String,
 }
-
+struct currentSerialStatus(Mutex<serialState>);
 /* ********************************************************
 	Private APIs
 ******************************************************** */
@@ -86,6 +85,7 @@ fn main() {
 			Tauri
 		******************************************************** */
 		tauri::Builder::default()
+			.manage(currentSerialStatus(Default::default()))
 			.invoke_handler(tauri::generate_handler![
 				resultJson, set_status, send_cfg, send_cmd, ctrl_play, ctrl_pause
 			])
@@ -135,7 +135,9 @@ fn main() {
 }
 
 #[tauri::command]
-fn resultJson() -> String {
+fn resultJson(note: State<currentSerialStatus>) -> String {
+	let nt = note.0.lock().unwrap();
+	println!("Current status: {}", *nt);
 	"{\"name\": \"Markus\", \"value\": 5}".into()
 }
 

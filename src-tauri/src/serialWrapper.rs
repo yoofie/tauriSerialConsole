@@ -12,14 +12,18 @@
 	Imports
 ******************************************************** */
 
-use std::thread::{self, JoinHandle};
+use std::{
+	default,
+	fmt::Display,
+	thread::{self, JoinHandle},
+};
 
 use loole::{Receiver, Sender};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-use crate::serial::serial;
+use crate::{currentSerialStatus, serial::serial};
 
 /* ********************************************************
 	Enums & Structures
@@ -55,8 +59,9 @@ pub struct serialSettings {
 	pub baud_rate: u32,
 	pub decoder: frameType,
 }
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
 pub enum serialState {
+	#[default]
 	IDLE,
 	RUNNING,
 }
@@ -71,6 +76,7 @@ pub struct sManager {
 	pub thread_handle: Option<JoinHandle<()>>,
 	pub tauri_handle: Option<AppHandle>,
 	pub serial_settings: Option<serialSettings>,
+	pub sState: serialState,
 }
 
 #[derive(Debug)]
@@ -93,6 +99,7 @@ impl sManager {
 				thread_handle: None,
 				tauri_handle: Some(handle.clone()),
 				serial_settings: None,
+				sState: serialState::IDLE,
 			},
 			sCtrl {
 				tx,
@@ -103,13 +110,12 @@ impl sManager {
 	}
 
 	pub fn ctrl_loop(&mut self) {
-		let mut sState = serialState::IDLE;
 		println!("CTRL RX THREAD");
 		loop {
 			match self.rx.recv() {
 				Ok(cmd) => match cmd {
 					serialCtrl::PLAY => {
-						if sState == serialState::IDLE {
+						if self.sState == serialState::IDLE {
 							println!("RX'd PLAY CMD");
 							if self.serial_settings.is_some() {
 								self.tx
@@ -127,19 +133,20 @@ impl sManager {
 					}
 
 					serialCtrl::PAUSE => {
-						if sState == serialState::RUNNING {
+						if self.sState == serialState::RUNNING {
 							println!("RX'd PAUSE COMMAND");
 							if let Some(serial_tx) = self.send_target.clone() {
 								serial_tx.send(true).expect("Failed to send serial kill command");
 								self.send_target = None;
 								self.thread_handle = None;
-								sState = serialState::IDLE;
+								self.sState = serialState::IDLE;
+								self.updateSerialState();
 							}
 						}
 					}
 
 					serialCtrl::EXIT => {
-						if sState == serialState::RUNNING {
+						if self.sState == serialState::RUNNING {
 							println!("RX'd EXIT CMD");
 							if let Some(serial_tx) = self.send_target.clone() {
 								if let Err(e) = serial_tx.send(true) {
@@ -148,13 +155,14 @@ impl sManager {
 								self.send_target = None;
 								self.thread_handle = None;
 								self.serial_settings = None;
-								sState = serialState::IDLE;
+								self.sState = serialState::IDLE;
+								self.updateSerialState();
 							}
 						}
 					}
 
 					serialCtrl::NEW(cfg) => {
-						if sState == serialState::IDLE {
+						if self.sState == serialState::IDLE {
 							println!("RX'd NEW CMD");
 							if self.validate_settings(&cfg) {
 								self.serial_settings = Some(cfg.clone());
@@ -172,7 +180,8 @@ impl sManager {
 									ss.run_serial();
 								});
 								self.thread_handle = Some(thread);
-								sState = serialState::RUNNING;
+								self.sState = serialState::RUNNING;
+								self.updateSerialState();
 							} else {
 								println!("Failed to validate settings!");
 								if let Some(handle) = self.tauri_handle.clone() {
@@ -195,7 +204,8 @@ impl sManager {
 					serialCtrl::SERIAL_EXIT => {
 						self.send_target = None;
 						self.thread_handle = None;
-						sState = serialState::IDLE;
+						self.sState = serialState::IDLE;
+						self.updateSerialState();
 					}
 				},
 				Err(e) => {
@@ -223,6 +233,31 @@ impl sManager {
 			true
 		} else {
 			false
+		}
+	}
+
+	/// This Tauri managed state is used to propogate the serial state back to the Tauri command API and therefore back to the UI
+	fn updateSerialState(&self) {
+		let handle = self.tauri_handle.clone().unwrap();
+		let my_state: tauri::State<currentSerialStatus> = handle.state();
+		let mut nt = my_state.0.lock().unwrap();
+		*nt = self.sState.clone();
+	}
+}
+
+/* ********************************************************
+	Extras
+******************************************************** */
+
+impl Display for serialState {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		match self {
+			serialState::IDLE => {
+				write!(f, "IDLE STATE")
+			}
+			serialState::RUNNING => {
+				write!(f, "RUNNING STATE")
+			}
 		}
 	}
 }

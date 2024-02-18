@@ -51,43 +51,8 @@ window.addEventListener("DOMContentLoaded", () => {
 // Prevent right click menu
 //document.addEventListener('contextmenu', event => event.preventDefault());
 
-var logData = new Array();
+
 var serialData = new Array();
-var container = document.createElement("div");
-var config = {
-  height: window.innerHeight,
-  itemHeight: 20,
-  total: 1000,
-  // Set to true to put into 'chat mode'.
-  reverse: false,
-  scrollerTagName: "div",
-
-  generate(row) {
-    var newHeight = 50;
-
-    let item = logData[row];
-    var el = Object.assign(document.createElement("div"), {
-      innerHTML: `ITEM ${item}`
-    });
-
-    return { element: el, height: newHeight };
-  }
-};
-
-var list = HyperList.create(container, config);
-
-window.onresize = e => {
-  config.height = window.innerHeight;
-  list.refresh(container, config);
-};
-
-container.classList.add("containerr");
-
-document.body.appendChild(container);
-
-let userx = "Volvo";
-
-
 
 function changeColor() {
   document.getElementById("box").style.backgroundColor = "#00FF00";
@@ -164,23 +129,11 @@ serialData.length = 0;
 }
 
 
-function appendLog(target, logItem) {
-  console.log("YESS");
-  var logx2 = document.getElementById("logx2");
-  var rxData = JSON.parse(logItem);
-  //console.log(`RXDATA2 = ${rxData.name} / ${rxData.value}`);
-  logData.push(rxData);
-
-  console.log(
-    `LOG DATA = ${logData[logData.length].name} / ${logData[logData.length]
-      .value}`
-  );
-  var h1 = document.createElement("li");
-  h1.innerHTML = `${rxData.name} | ${rxData.value} | <code>${logItem}</code>`;
-  document.getElementById("logx").appendChild(h1);
-
-  logx2.innerHTML = rxData.value;
+function resultJson() {
+	//invoke("resultJson", { blah: json_cfg_string }).then(message => console.log(message));
+	invoke("resultJson").then(message => console.log(message));
 }
+
 
 var counter = document.querySelector("#counter");
 var number = 0;
@@ -194,8 +147,6 @@ var countUp = function() {
   // if the number is less than 500, run it again
 	addSerialData();
 
-	config.height = window.innerHeight;
-	config.total = logData.length;
 	window.requestAnimationFrame(countUp);
 };
 

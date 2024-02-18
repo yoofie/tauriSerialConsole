@@ -155,6 +155,9 @@ impl serial {
 						print!("\t");
 						s = std::str::from_utf8(&item[..]).expect("invalid utf-8 sequence");
 						print!("UTF8 | {}\n", s);
+
+						// Send decoded serial frame to Tauri frontend
+						// TODO: Send to serial manager?
 						if let Err(e) = self.tauriHandle.emit_all("serialEvent", s) {
 							println!("SERIAL | FAILED TO EMIT EVENT DATA | {}", e);
 						}
